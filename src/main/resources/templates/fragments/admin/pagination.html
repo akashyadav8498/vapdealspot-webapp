@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div class="admin-pagination" th:fragment="pagination(currentPage, totalPages, baseUrl)" style="display: flex; align-items: center; justify-content: space-between; margin-top: 24px; font-size: 14px;">
+        <span style="color: var(--admin-text-muted);" th:text="'Page ' + ${currentPage + 1} + ' of ' + ${totalPages}">Page 1 of 1</span>
+        <div style="display: flex; gap: 8px;">
+            <a th:if="${currentPage > 0}" th:href="@{${baseUrl}(page=${currentPage - 1})}" class="admin-btn" style="background: #ffffff; color: var(--admin-text-main); border: 1px solid var(--admin-border);">Previous</a>
+            <a th:if="${currentPage + 1 < totalPages}" th:href="@{${baseUrl}(page=${currentPage + 1})}" class="admin-btn" style="background: #ffffff; color: var(--admin-text-main); border: 1px solid var(--admin-border);">Next</a>
+        </div>
+    </div>
+</body>
+</html>

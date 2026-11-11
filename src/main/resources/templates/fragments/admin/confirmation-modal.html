@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div id="confirmation-modal" th:fragment="modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div class="admin-card" style="max-width: 440px; width: 100%; margin: 20px;">
+            <h3 id="modal-title" style="margin-top: 0; font-size: 18px;">Confirm Action</h3>
+            <p id="modal-message" style="color: var(--admin-text-muted); font-size: 14px;">Are you sure you want to proceed?</p>
+            <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                <button type="button" class="admin-btn" style="background: #ffffff; color: var(--admin-text-main); border: 1px solid var(--admin-border);" onclick="document.getElementById('confirmation-modal').style.display='none'">Cancel</button>
+                <button type="button" id="modal-confirm-btn" class="admin-btn" style="background: #dc2626;">Confirm</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

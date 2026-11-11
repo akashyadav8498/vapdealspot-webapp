@@ -1,0 +1,38 @@
+# ==============================================================================
+# VAPE DEAL SPOT — PRODUCTION ENVIRONMENT (prod)
+# Hardened production configuration. Mandatory least-privilege credentials.
+# ==============================================================================
+spring:
+  application:
+    name: vapedealspot-webapp
+  datasource:
+    url: jdbc:mysql://${DB_HOST:}:${DB_PORT:3306}/${DB_NAME:vapedealspot_prod}?useSSL=true&requireSSL=true&serverTimezone=UTC&allowPublicKeyRetrieval=false
+    username: ${DB_USERNAME:}
+    password: ${DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  thymeleaf:
+    cache: true
+
+server:
+  port: ${PORT:8080}
+  servlet:
+    session:
+      cookie:
+        secure: true
+        http-only: true
+        same-site: lax
+  error:
+    include-stacktrace: never
+    include-message: never
+    include-exception: false
+    include-binding-errors: never
+
+logging:
+  level:
+    root: WARN
+    com.vapedealspot: INFO
+    org.hibernate.SQL: WARN

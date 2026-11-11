@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle ?: 'Vape Deal Spot | Best Vape Deals & Coupons'}">Vape Deal Spot Preview</title>
+    <meta name="description" th:content="${metaDescription ?: 'Compare vape prices across 25+ vape retailers.'}">
+    
+    <!-- Protected Preview: Strictly No Index / No Follow -->
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Customer V2 Core Stylesheet & Page Builder Preview Styles -->
+    <link rel="stylesheet" th:href="@{/css/customer-v2.css}">
+    <link rel="stylesheet" th:href="@{/css/page-builder.css}">
+
+    <script th:src="@{/js/common.js}"></script>
+    <script th:src="@{/js/customer-v2.js}" defer></script>
+</head>
+<body style="min-height: 100vh; display: flex; flex-direction: column; background: var(--color-bg);">
+
+    <!-- Sticky Top Preview Mode Indicator Banner -->
+    <aside aria-label="CMS Preview Mode Indicator" class="pb-preview-banner">
+        <div class="pb-preview-inner">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="pb-preview-tag">&#128065; Preview Mode</span>
+                <span class="pb-preview-text">
+                    Viewing unpublished draft (revision <strong th:text="'v' + ${draftVersion}">v1</strong>).
+                </span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <a th:href="@{/admin/page-builder}" class="pb-preview-btn">
+                    <span>&#8592; Return to Editor</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Customer V2 Storefront Header Fragment -->
+    <div th:replace="~{fragments/storefront/header :: header}"></div>
+
+    <!-- Main Content: Rendered Sections in Strict Order -->
+    <main style="flex: 1;">
+        <th:block th:each="sec : ${sections}">
+
+            <!-- 1. HERO SECTION -->
+            <section th:if="${sec.type == 'hero'}" class="container" style="padding-top: var(--space-10); padding-bottom: var(--space-8);">
+                <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+                    <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: var(--brand-soft); color: var(--brand); border-radius: var(--radius-pill); font-size: var(--text-sm); font-weight: var(--weight-semibold); margin-bottom: var(--space-4);">
+                        <span th:text="${sec.props['pillIcon']}">🏷️</span>
+                        <span th:text="${sec.props['pillText']}">Prices from 25+ vape shops</span>
+                    </div>
+
+                    <h1 style="font-family: var(--font-display); font-size: clamp(32px, 5vw, 48px); font-weight: var(--weight-bold); line-height: 1.15; margin: 0 0 var(--space-4); color: var(--text-strong);">
+                        <span th:text="${sec.props['titlePrimary']}">Compare vape prices.</span>
+                        <span style="color: var(--brand);" th:text="${sec.props['titleHighlight']}">Never overpay again.</span>
+                    </h1>
+
+                    <p style="font-size: var(--text-lg); color: var(--text-muted); line-height: 1.6; margin: 0 0 var(--space-6);"
+                       th:text="${sec.props['ledeText']}">
+                        Search pods, mods, e-liquids and CBD. We check the shops ourselves — compare prices across 25+ vape retailers.
+                    </p>
+
+                    <!-- Stats Strip -->
+                    <div th:if="${sec.props['showStats'] == true and sec.props['stats'] != null}"
+                         style="display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-6); padding: var(--space-4); background: var(--surface-sunken); border-radius: var(--radius-lg); border: 1px solid var(--border);">
+                        <div th:each="st : ${sec.props['stats']}" style="display: flex; align-items: center; gap: 8px; font-size: var(--text-sm); color: var(--text-strong); font-weight: var(--weight-medium);">
+                            <span th:text="${st['icon']}">📦</span>
+                            <span th:text="${st['text']}">1,475 products with a live price</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. CATEGORIES SECTION -->
+            <section th:if="${sec.type == 'categories'}" class="container" style="padding-top: var(--space-8); padding-bottom: var(--space-8);">
+                <div style="margin-bottom: var(--space-4);">
+                    <span style="font-size: var(--text-xs); font-weight: var(--weight-bold); text-transform: uppercase; letter-spacing: 0.05em; color: var(--brand);"
+                          th:text="${sec.props['eyebrow']}">Browse</span>
+                    <h2 style="font-family: var(--font-display); font-size: var(--text-2xl); font-weight: var(--weight-bold); margin: 4px 0 0; color: var(--text-strong);"
+                        th:text="${sec.props['title']}">Shop by category</h2>
+                </div>
+
+                <div style="display: flex; flex-wrap: wrap; gap: var(--space-3);" th:if="${sec.props['categories'] != null}">
+                    <a th:each="cat : ${sec.props['categories']}"
+                       th:href="@{${cat['path'] ?: '#'}}"
+                       style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--surface-card); border: 1px solid var(--border); border-radius: var(--radius-pill); text-decoration: none; color: var(--text-strong); font-size: var(--text-sm); font-weight: var(--weight-medium); transition: all 0.15s ease;">
+                        <span th:text="${cat['icon']}">💧</span>
+                        <span th:text="${cat['label']}">Vape Juices</span>
+                        <span style="font-size: var(--text-xs); color: var(--text-muted); background: var(--surface-sunken); padding: 2px 6px; border-radius: var(--radius-pill);"
+                              th:text="${cat['count']}">549</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- 3. TOP SAVINGS SECTION -->
+            <section th:if="${sec.type == 'top_savings'}" class="container" style="padding-top: var(--space-8); padding-bottom: var(--space-8);">
+                <div style="margin-bottom: var(--space-4);">
+                    <span style="font-size: var(--text-xs); font-weight: var(--weight-bold); text-transform: uppercase; letter-spacing: 0.05em; color: var(--success);"
+                          th:text="${sec.props['eyebrow']}">Biggest gaps between shops</span>
+                    <h2 style="font-family: var(--font-display); font-size: var(--text-2xl); font-weight: var(--weight-bold); margin: 4px 0 0; color: var(--text-strong);"
+                        th:text="${sec.props['title']}">Where you save the most</h2>
+                </div>
+
+                <div class="product-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-4);">
+                    <div th:each="prod : ${topSavingsProducts}" class="product-card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-2);">
+                            <span class="card-badge savings" th:text="${prod.savingsBadge ?: 'Top Deal'}">Save 37%</span>
+                            <span style="font-size: var(--text-xs); color: var(--text-muted);" th:text="${prod.brand}">SMOK</span>
+                        </div>
+                        <h4 style="font-size: var(--text-base); margin-bottom: var(--space-2); color: var(--text-strong);" th:text="${prod.name}">Nord 5 80W Pod Kit</h4>
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: var(--space-4);">
+                            <div>
+                                <span style="font-size: var(--text-lg); font-weight: var(--weight-bold); color: var(--brand);" th:text="'$' + ${prod.minPrice}">$24.99</span>
+                                <span th:if="${prod.maxPrice != null}" style="font-size: var(--text-xs); color: var(--text-muted); text-decoration: line-through; margin-left: 4px;" th:text="'$' + ${prod.maxPrice}">$39.99</span>
+                            </div>
+                            <span style="font-size: var(--text-xs); color: var(--text-muted);" th:text="${prod.shopCount != null ? prod.shopCount + ' shops' : ''}">14 shops</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. NEW ARRIVALS SECTION -->
+            <section th:if="${sec.type == 'new_arrivals'}" class="container" style="padding-top: var(--space-8); padding-bottom: var(--space-8);">
+                <div style="margin-bottom: var(--space-4);">
+                    <span style="font-size: var(--text-xs); font-weight: var(--weight-bold); text-transform: uppercase; letter-spacing: 0.05em; color: var(--brand);"
+                          th:text="${sec.props['eyebrow']}">First time on Vape Deal Spot</span>
+                    <h2 style="font-family: var(--font-display); font-size: var(--text-2xl); font-weight: var(--weight-bold); margin: 4px 0 0; color: var(--text-strong);"
+                        th:text="${sec.props['title']}">New arrivals</h2>
+                </div>
+
+                <div class="product-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-4);">
+                    <div th:each="prod : ${newArrivalProducts}" class="product-card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-2);">
+                            <span class="card-badge coupon">New Arrival</span>
+                            <span style="font-size: var(--text-xs); color: var(--text-muted);" th:text="${prod.brand}">Uwell</span>
+                        </div>
+                        <h4 style="font-size: var(--text-base); margin-bottom: var(--space-2); color: var(--text-strong);" th:text="${prod.name}">Caliburn G3 Pod Kit</h4>
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: var(--space-4);">
+                            <div>
+                                <span style="font-size: var(--text-lg); font-weight: var(--weight-bold); color: var(--brand);" th:text="'$' + ${prod.minPrice}">$22.95</span>
+                                <span th:if="${prod.maxPrice != null}" style="font-size: var(--text-xs); color: var(--text-muted); text-decoration: line-through; margin-left: 4px;" th:text="'$' + ${prod.maxPrice}">$29.99</span>
+                            </div>
+                            <span style="font-size: var(--text-xs); color: var(--text-muted);" th:text="${prod.shopCount != null ? prod.shopCount + ' shops' : ''}">8 shops</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. COUPONS SECTION -->
+            <section th:if="${sec.type == 'coupons'}" class="container" style="padding-top: var(--space-8); padding-bottom: var(--space-8);">
+                <div style="margin-bottom: var(--space-4);">
+                    <div style="display: flex; align-items: center; gap: 6px; font-size: var(--text-xs); font-weight: var(--weight-bold); text-transform: uppercase; letter-spacing: 0.05em; color: var(--success);">
+                        <span th:text="${sec.props['eyebrowIcon']}">✅</span>
+                        <span th:text="${sec.props['eyebrowText']}">Verified today</span>
+                    </div>
+                    <h2 style="font-family: var(--font-display); font-size: var(--text-2xl); font-weight: var(--weight-bold); margin: 4px 0 0; color: var(--text-strong);"
+                        th:text="${sec.props['title']}">Coupons & discount codes</h2>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-4);" th:if="${sec.props['coupons'] != null}">
+                    <div th:each="cp : ${sec.props['coupons']}"
+                         style="background: var(--surface-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-4); display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="font-weight: var(--weight-bold); font-size: var(--text-sm); color: var(--text-strong);" th:text="${cp['store']}">Element Vape</span>
+                                <span th:if="${cp['verified'] == true}" style="font-size: var(--text-xs); color: var(--success); font-weight: var(--weight-semibold);">✓ Verified</span>
+                            </div>
+                            <p style="font-size: var(--text-sm); color: var(--text-muted); margin: 0 0 12px; line-height: 1.4;" th:text="${cp['offer']}">15% off all e-liquids and nic salts</p>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px dashed var(--border);">
+                            <code style="font-family: monospace; font-size: var(--text-sm); font-weight: var(--weight-bold); background: var(--surface-sunken); padding: 4px 8px; border-radius: var(--radius-sm); color: var(--brand);"
+                                  th:text="${cp['code']}">JUICE15</code>
+                            <span style="font-size: var(--text-xs); font-weight: var(--weight-semibold); color: var(--brand);">Get Code</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. EDITORIAL SECTION -->
+            <section th:if="${sec.type == 'editorial'}" class="container" style="padding-top: var(--space-8); padding-bottom: var(--space-8);">
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: var(--space-6);" th:if="${sec.props['promos'] != null}">
+                    <div th:each="promo : ${sec.props['promos']}"
+                         style="background: var(--surface-card); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column;">
+                        <div style="height: 160px; background: var(--surface-sunken); display: flex; align-items: center; justify-content: center; font-size: 36px; color: var(--slate-400);">
+                            📰
+                        </div>
+                        <div style="padding: var(--space-4); flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                            <h3 style="font-size: var(--text-lg); font-weight: var(--weight-bold); color: var(--text-strong); margin: 0 0 12px;" th:text="${promo['title']}">Promo Title</h3>
+                            <div style="display: flex; justify-content: flex-end;">
+                                <span style="font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--brand);" th:text="${promo['ctaText'] ?: 'Shop now'}">Shop now &rarr;</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7. RECENT READS SECTION -->
+            <section th:if="${sec.type == 'recent_reads'}" class="container" style="padding-top: var(--space-8); padding-bottom: var(--space-10);">
+                <div style="margin-bottom: var(--space-4);">
+                    <div style="display: flex; align-items: center; gap: 6px; font-size: var(--text-xs); font-weight: var(--weight-bold); text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">
+                        <span th:text="${sec.props['eyebrowIcon']}">📰</span>
+                        <span th:text="${sec.props['eyebrowText']}">From the blog</span>
+                    </div>
+                    <h2 style="font-family: var(--font-display); font-size: var(--text-2xl); font-weight: var(--weight-bold); margin: 4px 0 0; color: var(--text-strong);"
+                        th:text="${sec.props['title']}">Recent reads</h2>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--space-4);" th:if="${sec.props['reads'] != null}">
+                    <article th:each="read : ${sec.props['reads']}"
+                             style="background: var(--surface-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-5); display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <span style="font-size: var(--text-xs); color: var(--text-muted);" th:text="${read['date']}">June 12, 2026</span>
+                            <h4 style="font-size: var(--text-base); font-weight: var(--weight-bold); color: var(--text-strong); margin: 8px 0 8px;" th:text="${read['title']}">Blog Article Title</h4>
+                            <p style="font-size: var(--text-sm); color: var(--text-muted); line-height: 1.5; margin: 0;" th:text="${read['excerpt']}">Article excerpt text...</p>
+                        </div>
+                        <div style="margin-top: 14px;">
+                            <span style="font-size: var(--text-xs); font-weight: var(--weight-semibold); color: var(--brand);">Read full post &rarr;</span>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </th:block>
+    </main>
+
+    <!-- Customer V2 Storefront Footer Fragment -->
+    <div th:replace="~{fragments/storefront/footer :: footer}"></div>
+</body>
+</html>
+

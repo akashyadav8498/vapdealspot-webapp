@@ -1,0 +1,35 @@
+# ==============================================================================
+# VAPE DEAL SPOT — COMMON APPLICATION CONFIGURATION
+# Baseline settings shared across all environments
+# ==============================================================================
+spring:
+  application:
+    name: vapedealspot-webapp
+  profiles:
+    default: dev
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+  web:
+    resources:
+      static-locations: classpath:/static/
+
+server:
+  port: ${PORT:8080}
+  servlet:
+    session:
+      timeout: 7d
+      tracking-modes: [cookie]
+      cookie:
+        name: JSESSIONID
+        http-only: true
+        same-site: lax

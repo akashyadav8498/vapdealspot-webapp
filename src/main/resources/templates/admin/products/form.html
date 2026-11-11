@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle ?: 'Product Details - Vape Deal Spot'}">Product Details - Vape Deal Spot</title>
+
+    <meta name="_csrf" th:if="${_csrf}" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:if="${_csrf}" th:content="${_csrf.headerName}"/>
+
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <script th:src="@{/js/common.js}"></script>
+    <script th:src="@{/js/admin.js}" defer></script>
+</head>
+<body class="admin-root">
+    <!-- Admin Sidebar -->
+    <div th:replace="~{fragments/admin/sidebar :: sidebar}"></div>
+
+    <div class="admin-main">
+        <!-- Admin Header -->
+        <div th:replace="~{fragments/admin/header :: header}"></div>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <!-- Flash & Error Notifications -->
+            <div th:if="${errorMessage}" class="admin-alert admin-alert-error">
+                <span th:text="${errorMessage}">An error occurred.</span>
+                <button type="button" class="admin-modal-close" onclick="this.parentElement.remove();">&times;</button>
+            </div>
+
+            <!-- Page Toolbar -->
+            <div class="admin-toolbar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <div>
+                    <div style="margin-bottom: 4px;">
+                        <a th:href="@{/admin/products}" style="color: #64748b; font-size: 13px; text-decoration: none;">&larr; Back to Products</a>
+                    </div>
+                    <h1 style="font-size: 22px; font-weight: 700; margin: 0; color: #0f172a;" th:text="${isEdit ? 'Edit Product' : 'Add New Product'}">Product Details</h1>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <a th:href="@{/admin/products}" class="btn btn-secondary" style="text-decoration: none; padding: 8px 16px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; color: #475569;">Cancel</a>
+                    <button type="submit" form="product-form" class="btn btn-primary" style="padding: 8px 20px; font-size: 13px;">Save Product</button>
+                </div>
+            </div>
+
+            <form id="product-form" th:action="${isEdit} ? @{/admin/products/{id}/edit(id=${productForm.id})} : @{/admin/products/new}"
+                  th:object="${productForm}" method="post">
+                <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <input type="hidden" th:field="*{id}"/>
+
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+                    <!-- Left Column: Core Fields -->
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <!-- Basic Information Card -->
+                        <div class="admin-card" style="padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff;">
+                            <h2 style="font-size: 16px; font-weight: 600; margin: 0 0 16px; color: #0f172a; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
+                                Basic Information
+                            </h2>
+
+                            <div style="display: flex; flex-direction: column; gap: 14px;">
+                                <div>
+                                    <label style="display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: #334155;">Product Name <span style="color: #ef4444;">*</span></label>
+                                    <input type="text" th:field="*{name}" required style="width: 100%; box-sizing: border-box; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" placeholder="e.g. Nord 5 80W Pod Kit">
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                    <div>
+                                        <label style="display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: #334155;">Brand <span style="color: #ef4444;">*</span></label>
+                                        <select th:field="*{brand}" required style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background-color: #fff;">
+                                            <option value="">Select Brand</option>
+                                            <option th:each="b : ${brands}" th:value="${b.name}" th:text="${b.name}"></option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: #334155;">Category <span style="color: #ef4444;">*</span></label>
+                                        <select th:field="*{category}" required style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background-color: #fff;">
+                                            <option value="">Select Category</option>
+                                            <option th:each="c : ${categories}" th:value="${c.slug}" th:text="${c.name}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                    <div>
+                                        <label style="display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: #334155;">SKU</label>
+                                        <input type="text" th:field="*{sku}" style="width: 100%; box-sizing: border-box; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" placeholder="e.g. SMOK-NORD-5">
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: #334155;">URL Slug <span style="font-weight: normal; color: #94a3b8;">(Auto-generated if blank)</span></label>
+                                        <input type="text" th:field="*{slug}" style="width: 100%; box-sizing: border-box; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" placeholder="e.g. smok-nord-5-80w-pod-kit">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Descriptions Card -->
+                        <div class="admin-card" style="padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff;">
+                            <h2 style="font-size: 16px; font-weight: 600; margin: 0 0 16px; color: #0f172a; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
+                                Product Description
+                            </h2>
+
+                            <div style="display: flex; flex-direction: column; gap: 14px;">
+                                <div>
+                                    <label style="display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: #334155;">Short Summary</label>
+                                    <textarea th:field="*{shortDescription}" rows="2" style="width: 100%; box-sizing: border-box; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; font-family: inherit;" placeholder="Brief highlight sentence..."></textarea>
+                                </div>
+
+                                <div>
+                                    <label style="display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: #334155;">Full Description <span style="color: #ef4444;">*</span></label>
+                                    <textarea th:field="*{description}" rows="5" required style="width: 100%; box-sizing: border-box; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; font-family: inherit;" placeholder="Detailed product specifications, features, and specs..."></textarea>
+                                </div>
+
+                                <div>
+                                    <label style="display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: #334155;">Tags <span style="font-weight: normal; color: #94a3b8;">(comma-separated)</span></label>
+                                    <input type="text" th:field="*{tags}" style="width: 100%; box-sizing: border-box; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" placeholder="pod, 80w, kit, compact">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product Variants Card -->
+                        <div class="admin-card" style="padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
+                                <div>
+                                    <h2 style="font-size: 16px; font-weight: 600; margin: 0; color: #0f172a;">Product Variants</h2>
+                                    <p style="margin: 2px 0 0; font-size: 12px; color: #64748b;">Manage colors, sizes, or bundle variations.</p>
+                                </div>
+                                <button type="button" onclick="addVariantRow()" class="btn btn-secondary" style="padding: 4px 10px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                                    + Add Variant
+                                </button>
+                            </div>
+
+                            <div style="overflow-x: auto;">
+                                <table id="variants-table" style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                                    <thead>
+                                        <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; text-align: left; color: #475569;">
+                                            <th style="padding: 8px; width: 140px;">SKU *</th>
+                                            <th style="padding: 8px;">Name</th>
+                                            <th style="padding: 8px; width: 100px;">Attribute</th>
+                                            <th style="padding: 8px; width: 110px;">Value</th>
+                                            <th style="padding: 8px; width: 90px;">Price ($)</th>
+                                            <th style="padding: 8px; width: 70px;">Stock</th>
+                                            <th style="padding: 8px; width: 50px; text-align: center;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="variants-tbody">
+                                        <!-- Iterate existing variants -->
+                                        <tr th:each="v, stat : *{variants}" style="border-bottom: 1px solid #f1f5f9;">
+                                            <td style="padding: 8px;">
+                                                <input type="hidden" th:field="*{variants[__${stat.index}__].id}" />
+                                                <input type="text" th:field="*{variants[__${stat.index}__].sku}" required style="width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" placeholder="SKU">
+                                            </td>
+                                            <td style="padding: 8px;">
+                                                <input type="text" th:field="*{variants[__${stat.index}__].name}" style="width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" placeholder="e.g. Matte Black">
+                                            </td>
+                                            <td style="padding: 8px;">
+                                                <input type="text" th:field="*{variants[__${stat.index}__].attributeName}" style="width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" placeholder="Color">
+                                            </td>
+                                            <td style="padding: 8px;">
+                                                <input type="text" th:field="*{variants[__${stat.index}__].attributeValue}" style="width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" placeholder="Black">
+                                            </td>
+                                            <td style="padding: 8px;">
+                                                <input type="number" step="0.01" th:field="*{variants[__${stat.index}__].price}" style="width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" placeholder="0.00">
+                                            </td>
+                                            <td style="padding: 8px;">
+                                                <input type="number" th:field="*{variants[__${stat.index}__].stock}" style="width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" placeholder="0">
+                                            </td>
+                                            <td style="padding: 8px; text-align: center;">
+                                                <button type="button" onclick="this.closest('tr').remove()" style="background: none; border: none; color: #ef4444; font-size: 16px; cursor: pointer;" title="Remove variant">&times;</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Retailer Offers Card -->
+                        <div class="admin-card" style="padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
+                                <div>
+                                    <h2 style="font-size: 16px; font-weight: 600; margin: 0; color: #0f172a;">Retailer Offers</h2>
+                                    <p style="margin: 2px 0 0; font-size: 12px; color: #64748b;">Deals aggregated from merchants for price comparison.</p>
+                                </div>
+                                <button type="button" onclick="addOfferRow()" class="btn btn-secondary" style="padding: 4px 10px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                                    + Add Offer
+                                </button>
+                            </div>
+
+                            <div style="overflow-x: auto;">
+                                <table id="offers-table" style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                                    <thead>
+                                        <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; text-align: left; color: #475569;">
+                                            <th style="padding: 8px; width: 140px;">Merchant *</th>
+                                            <th style="padding: 8px; width: 90px;">Price *</th>
+                                            <th style="padding: 8px; width: 90px;">Orig Price</th>
+                                            <th style="padding: 8px;">Affiliate URL</th>
+                                            <th style="padding: 8px; width: 110px;">Stock Status</th>
+                                            <th style="padding: 8px; width: 50px; text-align: center;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="offers-tbody">
+                                        <!-- Iterate existing offers -->
+                                        <tr th:each="o, stat : *{offers}" style="border-bottom: 1px solid #f1f5f9;">
+                                            <td style="padding: 8px;">
+                                                <input type="hidden" th:field="*{offers[__${stat.index}__].id}" />
+                                                <input type="text" th:field="*{offers[__${stat.index}__].merchantName}" required style="width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" placeholder="e.g. Element Vape">
+                                            </td>
+                                            <td style="padding: 8px;">
+                                                <input type="number" step="0.01" th:field="*{offers[__${stat.index}__].price}" required style="width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" placeholder="24.99">
+                                            </td>
+                                            <td style="padding: 8px;">
+                                                <input type="number" step="0.01" th:field="*{offers[__${stat.index}__].originalPrice}" style="width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" placeholder="39.99">
+                                            </td>
+                                            <td style="padding: 8px;">
+                                                <input type="text" th:field="*{offers[__${stat.index}__].affiliateUrl}" style="width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" placeholder="https://...">
+                                            </td>
+                                            <td style="padding: 8px;">
+                                                <select th:field="*{offers[__${stat.index}__].availability}" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background-color: #fff;">
+                                                    <option value="in_stock">In Stock</option>
+                                                    <option value="out_of_stock">Out of Stock</option>
+                                                </select>
+                                            </td>
+                                            <td style="padding: 8px; text-align: center;">
+                                                <button type="button" onclick="this.closest('tr').remove()" style="background: none; border: none; color: #ef4444; font-size: 16px; cursor: pointer;" title="Remove offer">&times;</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Settings & Media -->
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <!-- Publish & Visibility Card -->
+                        <div class="admin-card" style="padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff;">
+                            <h2 style="font-size: 16px; font-weight: 600; margin: 0 0 16px; color: #0f172a; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
+                                Visibility & Status
+                            </h2>
+
+                            <div style="display: flex; flex-direction: column; gap: 14px;">
+                                <div>
+                                    <label style="display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: #334155;">Status</label>
+                                    <select th:field="*{status}" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background-color: #fff;">
+                                        <option value="active">Active (Visible)</option>
+                                        <option value="inactive">Inactive (Hidden)</option>
+                                    </select>
+                                </div>
+
+                                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 8px;">
+                                    <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #334155; cursor: pointer;">
+                                        <input type="checkbox" th:field="*{featured}" style="width: 16px; height: 16px; cursor: pointer;">
+                                        <span>Featured Product</span>
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #334155; cursor: pointer;">
+                                        <input type="checkbox" th:field="*{trending}" style="width: 16px; height: 16px; cursor: pointer;">
+                                        <span>Trending Product</span>
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #334155; cursor: pointer;">
+                                        <input type="checkbox" th:field="*{showOnHomepage}" style="width: 16px; height: 16px; cursor: pointer;">
+                                        <span>Show on Storefront Homepage</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Featured Media Card -->
+                        <div class="admin-card" style="padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff;">
+                            <h2 style="font-size: 16px; font-weight: 600; margin: 0 0 16px; color: #0f172a; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
+                                Primary Image
+                            </h2>
+
+                            <div style="display: flex; flex-direction: column; gap: 12px;">
+                                <div>
+                                    <label style="display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: #334155;">Image URL <span style="color: #ef4444;">*</span></label>
+                                    <input type="text" id="featured-image-input" th:field="*{image}" required style="width: 100%; box-sizing: border-box; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" placeholder="/demo-assets/... or https://...">
+                                </div>
+
+                                <div style="width: 100%; height: 180px; border-radius: 6px; overflow: hidden; background: #f8fafc; border: 1px dashed #cbd5e1; display: flex; align-items: center; justify-content: center;">
+                                    <img id="image-preview" th:src="*{image != null && !image.isEmpty() ? image : ''}" alt="Product Preview" style="max-width: 100%; max-height: 100%; object-fit: contain;"
+                                         onerror="this.style.display='none'; document.getElementById('preview-placeholder').style.display='flex';"
+                                         onload="this.style.display='block'; document.getElementById('preview-placeholder').style.display='none';">
+                                    <div id="preview-placeholder" style="display: flex; flex-direction: column; align-items: center; color: #94a3b8; font-size: 12px;">
+                                        <span style="font-size: 28px; margin-bottom: 4px;">🖼️</span>
+                                        <span>Image Preview</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <!-- Dynamic Rows Vanilla JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var imgInput = document.getElementById('featured-image-input');
+            var imgPreview = document.getElementById('image-preview');
+            var placeholder = document.getElementById('preview-placeholder');
+
+            function updatePreview() {
+                if (imgInput.value && imgInput.value.trim() !== '') {
+                    imgPreview.src = imgInput.value.trim();
+                    imgPreview.style.display = 'block';
+                    placeholder.style.display = 'none';
+                } else {
+                    imgPreview.style.display = 'none';
+                    placeholder.style.display = 'flex';
+                }
+            }
+
+            if (imgInput) {
+                imgInput.addEventListener('input', updatePreview);
+                updatePreview();
+            }
+        });
+
+        function addVariantRow() {
+            var tbody = document.getElementById('variants-tbody');
+            var index = tbody.querySelectorAll('tr').length;
+            var tr = document.createElement('tr');
+            tr.style.borderBottom = '1px solid #f1f5f9';
+            tr.innerHTML = `
+                <td style="padding: 8px;">
+                    <input type="text" name="variants[${index}].sku" required style="width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" placeholder="SKU">
+                </td>
+                <td style="padding: 8px;">
+                    <input type="text" name="variants[${index}].name" style="width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" placeholder="e.g. Matte Black">
+                </td>
+                <td style="padding: 8px;">
+                    <input type="text" name="variants[${index}].attributeName" value="Color" style="width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+                </td>
+                <td style="padding: 8px;">
+                    <input type="text" name="variants[${index}].attributeValue" style="width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" placeholder="Black">
+                </td>
+                <td style="padding: 8px;">
+                    <input type="number" step="0.01" name="variants[${index}].price" style="width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" placeholder="0.00">
+                </td>
+                <td style="padding: 8px;">
+                    <input type="number" name="variants[${index}].stock" value="0" style="width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+                </td>
+                <td style="padding: 8px; text-align: center;">
+                    <button type="button" onclick="this.closest('tr').remove()" style="background: none; border: none; color: #ef4444; font-size: 16px; cursor: pointer;" title="Remove variant">&times;</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        function addOfferRow() {
+            var tbody = document.getElementById('offers-tbody');
+            var index = tbody.querySelectorAll('tr').length;
+            var tr = document.createElement('tr');
+            tr.style.borderBottom = '1px solid #f1f5f9';
+            tr.innerHTML = `
+                <td style="padding: 8px;">
+                    <input type="text" name="offers[${index}].merchantName" required style="width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" placeholder="e.g. Element Vape">
+                </td>
+                <td style="padding: 8px;">
+                    <input type="number" step="0.01" name="offers[${index}].price" required style="width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" placeholder="24.99">
+                </td>
+                <td style="padding: 8px;">
+                    <input type="number" step="0.01" name="offers[${index}].originalPrice" style="width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" placeholder="39.99">
+                </td>
+                <td style="padding: 8px;">
+                    <input type="text" name="offers[${index}].affiliateUrl" style="width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" placeholder="https://...">
+                </td>
+                <td style="padding: 8px;">
+                    <select name="offers[${index}].availability" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background-color: #fff;">
+                        <option value="in_stock">In Stock</option>
+                        <option value="out_of_stock">Out of Stock</option>
+                    </select>
+                </td>
+                <td style="padding: 8px; text-align: center;">
+                    <button type="button" onclick="this.closest('tr').remove()" style="background: none; border: none; color: #ef4444; font-size: 16px; cursor: pointer;" title="Remove offer">&times;</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        }
+    </script>
+</body>
+</html>
+

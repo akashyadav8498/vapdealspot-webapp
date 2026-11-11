@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <nav class="breadcrumbs" th:fragment="breadcrumbs(items)" aria-label="Breadcrumb">
+        <span th:each="item, stat : ${items}" style="display: inline-flex; align-items: center; gap: var(--space-2);">
+            <a th:if="${item.path != null}" th:href="@{${item.path}}" th:text="${item.label}">Home</a>
+            <span th:if="${item.path == null}" class="breadcrumb-current" th:text="${item.label}">Current</span>
+            <span th:if="${!stat.last}" class="breadcrumb-separator" aria-hidden="true">&gt;</span>
+        </span>
+    </nav>
+</body>
+</html>
+

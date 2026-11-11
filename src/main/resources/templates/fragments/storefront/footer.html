@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <footer class="site-footer" th:fragment="footer">
+        <div class="container footer-inner">
+            <div>
+                <p style="margin: 0; font-weight: var(--weight-medium); color: var(--text-strong);">Vape Deal Spot &copy; <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy')}">2026</span></p>
+                <p style="margin: 4px 0 0; font-size: var(--text-xs);">Find the best verified deals, discounts, and vouchers.</p>
+            </div>
+            <div style="font-size: var(--text-xs); max-width: 420px; line-height: 1.4;">
+                <p style="margin: 0;"><strong>Compliance Notice:</strong> Intended for adults of legal smoking and vaping age (21+). Products may contain nicotine, an addictive chemical.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

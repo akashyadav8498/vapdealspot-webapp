@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <header class="site-header" th:fragment="header">
+        <div class="container header-inner">
+            <!-- Mobile Menu Toggle Burger -->
+            <button class="burger" aria-label="Toggle navigation menu" type="button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+
+            <!-- Brand Logo -->
+            <a th:href="@{/}" class="logo-wrapper" aria-label="Vape Deal Spot Home">
+                <img th:src="@{/logo-light.png}" alt="Vape Deal Spot" class="logo-img logo-light-img">
+                <img th:src="@{/logo-dark.png}" alt="Vape Deal Spot" class="logo-img logo-dark-img">
+            </a>
+
+            <!-- Header Global Search -->
+            <div class="header-search-container">
+                <form th:action="@{/search}" method="get" class="search-form" role="search">
+                    <div class="search-input-wrapper">
+                        <span class="search-icon" aria-hidden="true">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </span>
+                        <input type="search" name="q" placeholder="Search vapes, juices, CBD..." aria-label="Search products" class="search-input" th:value="${query}">
+                        <button type="submit" class="btn btn-primary btn-pill btn-compact">Search</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Navigation Links Fragment -->
+            <div th:replace="~{fragments/storefront/navigation :: navigation}"></div>
+
+            <!-- Header Controls: Theme Toggle & User Auth -->
+            <div style="display: flex; align-items: center; gap: var(--space-3); margin-left: auto;">
+                <!-- Theme Toggle -->
+                <button type="button" class="theme-btn theme-toggle-btn" onclick="window.toggleTheme()" aria-label="Toggle Theme">
+                    <span>🌓</span>
+                    <span class="theme-label">Theme</span>
+                </button>
+
+                <!-- Anonymous Visitor -->
+                <th:block th:if="${currentUser == null}">
+                    <a th:href="@{/login}" class="btn btn-neutral btn-compact" style="text-decoration: none; font-size: var(--text-xs); font-weight: var(--weight-semibold);">
+                        Sign In
+                    </a>
+                    <a th:href="@{/register}" class="btn btn-primary btn-pill btn-compact" style="text-decoration: none; font-size: var(--text-xs); font-weight: var(--weight-bold);">
+                        Register
+                    </a>
+                </th:block>
+
+                <!-- Authenticated CUSTOMER -->
+                <th:block th:if="${currentUser != null and currentUser.isCustomer()}">
+                    <div style="display: flex; align-items: center; gap: var(--space-2);">
+                        <span style="font-size: var(--text-xs); font-weight: var(--weight-medium); color: var(--text-strong);"
+                              th:text="${'Hi, ' + (currentUser.firstName != null and !currentUser.firstName.isEmpty() ? currentUser.firstName : currentUser.username)}">
+                            Hi, Alex
+                        </span>
+                        <form th:action="@{/logout}" method="post" style="margin: 0; display: inline;">
+                            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <button type="submit" class="btn btn-neutral btn-compact" style="font-size: var(--text-xs); padding: 4px 10px; cursor: pointer;">
+                                Sign Out
+                            </button>
+                        </form>
+                    </div>
+                </th:block>
+
+                <!-- Authenticated ADMIN -->
+                <th:block th:if="${currentUser != null and currentUser.isAdmin()}">
+                    <div style="display: flex; align-items: center; gap: var(--space-2);">
+                        <span style="font-size: var(--text-xs); background: rgba(59, 130, 246, 0.15); color: #3b82f6; padding: 2px 8px; border-radius: var(--radius-sm); font-weight: var(--weight-bold);">
+                            Staff
+                        </span>
+                        <a th:href="@{/admin/dashboard}" class="btn btn-primary btn-compact" style="text-decoration: none; font-size: var(--text-xs); font-weight: var(--weight-semibold);">
+                            Admin Panel
+                        </a>
+                        <form th:action="@{/admin/logout}" method="post" style="margin: 0; display: inline;">
+                            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <button type="submit" class="btn btn-neutral btn-compact" style="font-size: var(--text-xs); padding: 4px 10px; cursor: pointer;">
+                                Sign Out
+                            </button>
+                        </form>
+                    </div>
+                </th:block>
+
+                <!-- Authenticated SUPER_ADMIN -->
+                <th:block th:if="${currentUser != null and currentUser.isSuperAdmin()}">
+                    <div style="display: flex; align-items: center; gap: var(--space-2);">
+                        <span style="font-size: var(--text-xs); background: rgba(168, 85, 247, 0.15); color: #a855f7; padding: 2px 8px; border-radius: var(--radius-sm); font-weight: var(--weight-bold);">
+                            Super Admin
+                        </span>
+                        <a th:href="@{/admin/dashboard}" class="btn btn-primary btn-compact" style="text-decoration: none; font-size: var(--text-xs); font-weight: var(--weight-semibold);">
+                            Admin Panel
+                        </a>
+                        <form th:action="@{/admin/logout}" method="post" style="margin: 0; display: inline;">
+                            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <button type="submit" class="btn btn-neutral btn-compact" style="font-size: var(--text-xs); padding: 4px 10px; cursor: pointer;">
+                                Sign Out
+                            </button>
+                        </form>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+
+        <!-- Mobile Nav Drawer Overlay -->
+        <div class="mobile-nav-overlay" style="position: fixed; inset: 60px 0 0 0; background: var(--color-bg); z-index: 40; padding: var(--space-6); overflow-y: auto;">
+            <div style="margin-bottom: var(--space-6);">
+                <form th:action="@{/search}" method="get" class="search-form">
+                    <div class="search-input-wrapper">
+                        <input type="search" name="q" placeholder="Search..." class="search-input">
+                        <button type="submit" class="btn btn-primary btn-compact">Go</button>
+                    </div>
+                </form>
+            </div>
+            <nav style="display: flex; flex-direction: column; gap: var(--space-3); font-size: var(--text-lg);">
+                <a th:href="@{/best-of}" class="nav-link">Best Of</a>
+                <a th:href="@{/category/pod-vapes}" class="nav-link">Devices</a>
+                <a th:href="@{/category/tanks}" class="nav-link">Tanks</a>
+                <a th:href="@{/category/e-liquids}" class="nav-link">E-Liquids</a>
+                <a th:href="@{/category/cbd-thc}" class="nav-link">CBD / THC</a>
+                <a th:href="@{/deals}" class="nav-link">Deals</a>
+                <a th:href="@{/brands}" class="nav-link">Brands</a>
+
+                <hr style="border: none; border-top: 1px solid var(--color-border); margin: var(--space-2) 0;">
+
+                <th:block th:if="${currentUser == null}">
+                    <a th:href="@{/login}" class="nav-link" style="font-weight: var(--weight-bold);">Sign In</a>
+                    <a th:href="@{/register}" class="nav-link">Create Account</a>
+                </th:block>
+
+                <th:block th:if="${currentUser != null}">
+                    <span style="font-size: var(--text-sm); color: var(--text-muted);" th:text="${'Signed in as ' + (currentUser.firstName != null and !currentUser.firstName.isEmpty() ? currentUser.firstName : currentUser.username)}"></span>
+                    <a th:if="${currentUser.hasAdminPrivilege()}" th:href="@{/admin/dashboard}" class="nav-link" style="color: var(--primary); font-weight: var(--weight-bold);">Admin Panel</a>
+                    <form th:action="${currentUser.hasAdminPrivilege() ? '/admin/logout' : '/logout'}" method="post" style="margin-top: var(--space-2);">
+                        <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <button type="submit" class="btn btn-neutral btn-compact" style="width: 100%;">Sign Out</button>
+                    </form>
+                </th:block>
+            </nav>
+        </div>
+    </header>
+</body>
+</html>

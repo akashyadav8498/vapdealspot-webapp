@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <header class="admin-header" th:fragment="header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <a th:href="@{/admin/dashboard}" style="font-size: 13px; color: var(--admin-text-muted); text-decoration: none;">Admin</a>
+            <span style="color: var(--admin-border); font-size: 13px;">/</span>
+            <span style="font-size: 14px; font-weight: 600; color: var(--admin-text-main);" th:text="${adminSectionTitle ?: 'Administration'}">Administration</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <th:block th:if="${currentUser != null}">
+                    <span th:each="r : ${currentUser.roleSlugs}" class="admin-badge admin-badge-info" th:text="${r}">admin</span>
+                </th:block>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 34px; height: 34px; border-radius: 50%; background: #0f172a; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px;"
+                     th:text="${currentUser != null && currentUser.fullName != null && !currentUser.fullName.isEmpty() ? #strings.substring(currentUser.fullName, 0, 1) : 'A'}">A</div>
+                <div style="display: flex; flex-direction: column; line-height: 1.2;">
+                    <span style="font-size: 13px; font-weight: 600; color: var(--admin-text-main);"
+                          th:text="${currentUser != null ? currentUser.fullName : 'Admin User'}">Admin User</span>
+                    <span style="font-size: 11px; color: var(--admin-text-muted);"
+                          th:text="${currentUser != null ? currentUser.email : 'admin'}">admin@vapedealspot.com</span>
+                </div>
+            </div>
+            <form th:action="@{/admin/logout}" method="post" style="margin: 0;">
+                <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <button type="submit" class="logout-btn">Sign Out</button>
+            </form>
+        </div>
+    </header>
+</body>
+</html>

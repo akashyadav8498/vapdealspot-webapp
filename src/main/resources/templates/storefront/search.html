@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle != null ? pageTitle : 'Product Search | Vape Deal Spot'}">Product Search | Vape Deal Spot</title>
+    
+    <meta name="description" th:content="${metaDescription != null ? metaDescription : 'Compare vape prices across 25+ trusted retailers.'}">
+    
+    <link rel="stylesheet" th:href="@{/css/customer-v2.css}">
+    <script>
+        (function() {
+            try {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch(e) {}
+        })();
+    </script>
+    <script th:src="@{/js/customer-v2.js}" defer></script>
+</head>
+<body style="min-height: 100vh; display: flex; flex-direction: column; background: var(--color-bg);">
+
+    <!-- Header Fragment -->
+    <div th:replace="~{fragments/storefront/header :: header}"></div>
+
+    <main class="container listing-layout" style="flex: 1;">
+        <!-- Header / Title -->
+        <div class="listing-header">
+            <h1 class="listing-title" th:if="${query != null and not #strings.isEmpty(query)}">
+                Search Results for "<span th:text="${query}">Nord</span>"
+            </h1>
+            <h1 class="listing-title" th:if="${query == null or #strings.isEmpty(query)}">
+                All Vape Products
+            </h1>
+            <p class="listing-description">Compare prices across verified vape shops. Never overpay again.</p>
+        </div>
+
+        <div class="listing-body">
+            <!-- Filter Sidebar -->
+            <aside class="filter-sidebar">
+                <form th:action="@{/search}" method="get" id="filterForm">
+                    <input type="hidden" name="q" th:value="${query}">
+                    
+                    <!-- In Stock Filter -->
+                    <div class="filter-section">
+                        <div class="filter-title">Availability</div>
+                        <div class="filter-list">
+                            <label class="filter-item">
+                                <input type="checkbox" name="instock" value="true" th:checked="${inStockOnly}" onchange="document.getElementById('filterForm').submit()">
+                                <span>In Stock Only</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Category Filter -->
+                    <div class="filter-section" th:if="${selectedCategory != null and not #strings.isEmpty(selectedCategory)}">
+                        <div class="filter-title">Category</div>
+                        <div class="filter-list">
+                            <div style="font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--brand);">
+                                <span th:text="${selectedCategory}">Pod Systems</span>
+                                <input type="hidden" name="category" th:value="${selectedCategory}">
+                                <a th:href="@{/search(q=${query}, brand=${selectedBrand}, instock=${inStockOnly}, sort=${sort})}"
+                                   style="font-size: var(--text-xs); color: var(--text-muted); margin-left: 6px;">(Clear)</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Brand Filter -->
+                    <div class="filter-section" th:if="${availableBrands != null and not #lists.isEmpty(availableBrands)}">
+                        <div class="filter-title">Brands</div>
+                        <div class="filter-list">
+                            <label class="filter-item">
+                                <input type="radio" name="brand" value="" th:checked="${selectedBrand == null or #strings.isEmpty(selectedBrand)}" onchange="document.getElementById('filterForm').submit()">
+                                <span>All Brands</span>
+                            </label>
+                            <label class="filter-item" th:each="b : ${availableBrands}">
+                                <input type="radio" name="brand" th:value="${b}" th:checked="${selectedBrand == b}" onchange="document.getElementById('filterForm').submit()">
+                                <span th:text="${b}">SMOK</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Sort Preservation -->
+                    <input type="hidden" name="sort" th:value="${sort}">
+
+                    <div style="margin-top: var(--space-4);">
+                        <a th:href="@{/search}" class="btn btn-secondary btn-sm" style="width: 100%; text-align: center; display: block;">Reset Filters</a>
+                    </div>
+                </form>
+            </aside>
+
+            <!-- Results Column -->
+            <div class="results-column">
+                <div class="listing-toolbar">
+                    <div class="listing-count">
+                        Found <strong th:text="${totalResults}">8</strong> products
+                    </div>
+
+                    <!-- Sort Dropdown -->
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label for="sortSelect" style="font-size: var(--text-sm); color: var(--text-muted);">Sort by:</label>
+                        <select id="sortSelect" class="form-input" style="padding: 6px 12px; font-size: var(--text-sm); border-radius: var(--radius-sm);"
+                                onchange="location.href=this.value;">
+                            <option th:value="@{/search(q=${query}, category=${selectedCategory}, brand=${selectedBrand}, instock=${inStockOnly}, sort='default')}"
+                                    th:selected="${sort == 'default' or sort == null}">Relevance</option>
+                            <option th:value="@{/search(q=${query}, category=${selectedCategory}, brand=${selectedBrand}, instock=${inStockOnly}, sort='price-asc')}"
+                                    th:selected="${sort == 'price-asc'}">Price: Low to High</option>
+                            <option th:value="@{/search(q=${query}, category=${selectedCategory}, brand=${selectedBrand}, instock=${inStockOnly}, sort='price-desc')}"
+                                    th:selected="${sort == 'price-desc'}">Price: High to Low</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state" th:if="${products == null or #lists.isEmpty(products)}">
+                    <div class="empty-state-icon" aria-hidden="true">🔍</div>
+                    <h2 class="empty-state-title">No products found</h2>
+                    <p class="empty-state-message">
+                        We couldn't find any products matching your search criteria. Try removing filters or searching for different keywords.
+                    </p>
+                    <a th:href="@{/search}" class="btn btn-primary btn-pill">Browse All Products</a>
+                </div>
+
+                <!-- Product Grid -->
+                <div class="product-grid" th:if="${products != null and not #lists.isEmpty(products)}">
+                    <th:block th:each="prod : ${products}">
+                        <div th:replace="~{fragments/storefront/product-card :: card(prod=${prod})}"></div>
+                    </th:block>
+                </div>
+
+                <!-- Pagination -->
+                <nav th:if="${totalPages > 1}" aria-label="Catalog pagination" style="display: flex; justify-content: center; gap: 8px; margin-top: var(--space-10);">
+                    <a th:if="${currentPage > 0}"
+                       th:href="@{/search(q=${query}, category=${selectedCategory}, brand=${selectedBrand}, instock=${inStockOnly}, sort=${sort}, page=${currentPage - 1})}"
+                       class="btn btn-secondary btn-sm">&larr; Previous</a>
+
+                    <span style="display: flex; align-items: center; padding: 0 12px; font-size: var(--text-sm); color: var(--text-muted);"
+                          th:text="'Page ' + (${currentPage} + 1) + ' of ' + ${totalPages}">Page 1 of 3</span>
+
+                    <a th:if="${currentPage < totalPages - 1}"
+                       th:href="@{/search(q=${query}, category=${selectedCategory}, brand=${selectedBrand}, instock=${inStockOnly}, sort=${sort}, page=${currentPage + 1})}"
+                       class="btn btn-secondary btn-sm">Next &rarr;</a>
+                </nav>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{fragments/storefront/footer :: footer}"></div>
+</body>
+</html>
+

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle != null ? pageTitle + ' | Admin - Vape Deal Spot' : 'Admin Dashboard | Vape Deal Spot'}">Admin Dashboard - Vape Deal Spot</title>
+    
+    <meta name="_csrf" th:if="${_csrf}" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:if="${_csrf}" th:content="${_csrf.headerName}"/>
+
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <script th:src="@{/js/common.js}"></script>
+    <script th:src="@{/js/admin.js}" defer></script>
+    <style>
+        .dashboard-welcome {
+            background: #ffffff;
+            border-radius: var(--admin-radius);
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+        }
+        .user-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #f1f5f9;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #334155;
+            margin-right: 6px;
+        }
+        .logout-btn {
+            background: #ef4444;
+            color: #ffffff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+    </style>
+</head>
+<body class="admin-root">
+    <!-- Admin Sidebar Fragment -->
+    <div th:replace="~{fragments/admin/sidebar :: sidebar}"></div>
+
+    <div class="admin-main">
+        <!-- Admin Topbar Header Fragment -->
+        <div th:replace="~{fragments/admin/header :: header}"></div>
+
+        <!-- Admin Content Area -->
+        <main class="admin-content">
+            <div class="dashboard-welcome">
+                <h1 style="font-size: 22px; font-weight: 700; margin: 0 0 8px; color: #0f172a;">
+                    Welcome back, <span th:text="${currentUser != null ? currentUser.fullName : 'Administrator'}">Administrator</span>!
+                </h1>
+                <p style="margin: 0 0 16px; color: #64748b; font-size: 14px;">
+                    Logged in as: <strong th:text="${currentUser != null ? currentUser.email : 'admin'}">admin@vapedealspot.com</strong>
+                </p>
+                <div>
+                    <span style="font-size: 13px; font-weight: 600; color: #475569; margin-right: 8px;">Assigned Roles:</span>
+                    <span th:if="${currentUser != null}" th:each="role : ${currentUser.roleSlugs}" class="user-pill" th:text="${role}">admin</span>
+                </div>
+            </div>
+
+            <div class="admin-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                <div class="admin-card">
+                    <h3>Database-Backed Security</h3>
+                    <p>Session authentication is enforcing authoritative credentials and RBAC directly from MySQL.</p>
+                    <span class="admin-badge admin-badge-success">Active & Verified</span>
+                </div>
+
+                <div class="admin-card">
+                    <h3>Access Control Management</h3>
+                    <p>Manage administrative users, assign roles, and define fine-grained permission matrices.</p>
+                    <div style="display: flex; gap: 8px; margin-top: 12px;">
+                        <a th:href="@{/admin/users}" class="btn btn-primary btn-sm">Manage Users &rarr;</a>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <h3>Session Management</h3>
+                    <p>Session fixation protection and real-time database session version invalidation active.</p>
+                    <span class="admin-badge admin-badge-success">Session Fixation Protected</span>
+                </div>
+
+                <div class="admin-card">
+                    <h3>Page Builder Governance</h3>
+                    <p>Fine-grained permissions evaluated dynamically based on authenticated role policy.</p>
+                    <span class="admin-badge admin-badge-neutral">Policy Enforced</span>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
+

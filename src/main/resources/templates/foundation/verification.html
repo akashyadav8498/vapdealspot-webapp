@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Milestone 15 Foundation & Verification | Vape Deal Spot</title>
+    
+    <!-- Customer V2 Core Styles -->
+    <link rel="stylesheet" th:href="@{/css/customer-v2.css}">
+    
+    <script th:src="@{/js/common.js}"></script>
+    <script th:src="@{/js/customer-v2.js}" defer></script>
+</head>
+<body>
+    <!-- Customer V2 Header Fragment -->
+    <div th:replace="~{fragments/storefront/header :: header}"></div>
+
+    <!-- Main Content Area -->
+    <main class="main-content" style="flex: 1; padding: var(--space-8) 0;">
+        <div class="container">
+            <!-- Hero / Banner Section -->
+            <div style="background: var(--surface-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-8); margin-bottom: var(--space-8); box-shadow: var(--shadow-sm);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--space-4);">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: var(--space-2);">
+                            <span class="card-badge savings">MILESTONE 15</span>
+                            <span style="font-size: var(--text-xs); color: var(--text-muted); font-weight: var(--weight-medium);">Spring Boot Full-Stack Foundation</span>
+                        </div>
+                        <h1 style="font-size: var(--text-3xl); margin-bottom: var(--space-2);">Full-Stack Spring Boot &amp; Thymeleaf Setup</h1>
+                        <p style="color: var(--text-muted); font-size: var(--text-base); margin: 0; max-width: 680px;">
+                            Unified server-side rendered application replacing Next.js and React. Powered by Java 25 LTS, Spring Boot 4.1.2, Thymeleaf, MySQL, and Spring Data JPA.
+                        </p>
+                    </div>
+                    <div style="text-align: right;">
+                        <span class="card-badge" style="background: var(--coral-50); color: var(--coral-600); font-size: var(--text-sm); padding: 4px 12px;" th:text="${systemInfo.applicationName}">vapedealspot-webapp</span>
+                        <div style="margin-top: 8px; font-size: var(--text-xs); color: var(--text-muted);">
+                            Profile: <strong th:text="${systemInfo.environmentProfile}">[default]</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diagnostics Metrics Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-8);">
+                <div class="product-card">
+                    <span style="font-size: var(--text-xs); color: var(--text-muted); text-transform: uppercase; font-weight: var(--weight-semibold);">Runtime Version</span>
+                    <h3 style="margin: 8px 0 4px; font-size: var(--text-xl);" th:text="${systemInfo.javaVersion}">25</h3>
+                    <span style="font-size: var(--text-xs); color: var(--success); font-weight: var(--weight-medium);">Java 25 LTS Standard</span>
+                </div>
+                <div class="product-card">
+                    <span style="font-size: var(--text-xs); color: var(--text-muted); text-transform: uppercase; font-weight: var(--weight-semibold);">Spring Boot</span>
+                    <h3 style="margin: 8px 0 4px; font-size: var(--text-xl);" th:text="${systemInfo.springBootVersion}">4.1.2</h3>
+                    <span style="font-size: var(--text-xs); color: var(--brand); font-weight: var(--weight-medium);">Official GA Release</span>
+                </div>
+                <div class="product-card">
+                    <span style="font-size: var(--text-xs); color: var(--text-muted); text-transform: uppercase; font-weight: var(--weight-semibold);">Database Status</span>
+                    <h3 style="margin: 8px 0 4px; font-size: var(--text-xl);" th:text="${systemInfo.databaseStatus}">CONNECTED</h3>
+                    <span style="font-size: var(--text-xs); color: var(--text-muted);">MySQL 8.x (Preserved Schema)</span>
+                </div>
+                <div class="product-card">
+                    <span style="font-size: var(--text-xs); color: var(--text-muted); text-transform: uppercase; font-weight: var(--weight-semibold);">Memory (JVM Heap)</span>
+                    <h3 style="margin: 8px 0 4px; font-size: var(--text-xl);"><span th:text="${systemInfo.usedMemoryMb()}">64</span> / <span th:text="${systemInfo.totalMemoryMb}">256</span> MB</h3>
+                    <span style="font-size: var(--text-xs); color: var(--text-muted);">Server-Side Low Overhead</span>
+                </div>
+            </div>
+
+            <!-- Foundation Verification Checklist -->
+            <div style="background: var(--surface-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-6); margin-bottom: var(--space-8); box-shadow: var(--shadow-sm);">
+                <h2 style="font-size: var(--text-xl); margin-bottom: var(--space-4);">Architecture &amp; Foundation Checklist</h2>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: var(--text-sm);">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border); text-align: left;">
+                                <th style="padding: 10px var(--space-3); color: var(--text-muted);">Category</th>
+                                <th style="padding: 10px var(--space-3); color: var(--text-muted);">Requirement</th>
+                                <th style="padding: 10px var(--space-3); color: var(--text-muted);">Target Standard</th>
+                                <th style="padding: 10px var(--space-3); color: var(--text-muted);">Active Status</th>
+                                <th style="padding: 10px var(--space-3); color: var(--text-muted);">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${checklist}" style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 12px var(--space-3); font-weight: var(--weight-medium);" th:text="${item.category}">Category</td>
+                                <td style="padding: 12px var(--space-3);" th:text="${item.name}">Requirement</td>
+                                <td style="padding: 12px var(--space-3); font-family: monospace; color: var(--text-muted);" th:text="${item.expected}">Expected</td>
+                                <td style="padding: 12px var(--space-3); font-family: monospace;" th:text="${item.actual}">Actual</td>
+                                <td style="padding: 12px var(--space-3);">
+                                    <span th:if="${item.passed}" class="card-badge savings" style="font-size: 11px;">VERIFIED</span>
+                                    <span th:unless="${item.passed}" class="card-badge" style="background: var(--red-100); color: var(--red-600); font-size: 11px;">FAILED</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Customer V2 Component Demonstration (LOCKED Visual System) -->
+            <div style="margin-bottom: var(--space-8);">
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: var(--space-4);">
+                    <h2 style="font-size: var(--text-xl); margin: 0;">Customer V2 Component Samples</h2>
+                    <span style="font-size: var(--text-xs); color: var(--text-muted);">Pixel-perfect preservation of Customer V2</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-6);">
+                    <div class="card product-card" style="padding: var(--space-4);">
+                        <span class="badge badge-success" style="align-self: flex-start; margin-bottom: 8px;">25% OFF</span>
+                        <div style="font-size: var(--text-xs); color: var(--text-muted); text-transform: uppercase;">Geek Bar</div>
+                        <h4 style="margin: 4px 0 8px;">Geek Bar Pulse 15000</h4>
+                        <span style="color: var(--brand); font-weight: bold; font-size: var(--text-lg);">$14.99</span>
+                    </div>
+                    <div class="card product-card" style="padding: var(--space-4);">
+                        <span class="badge badge-warning" style="align-self: flex-start; margin-bottom: 8px;">PROMO CODE</span>
+                        <div style="font-size: var(--text-xs); color: var(--text-muted); text-transform: uppercase;">Lost Mary</div>
+                        <h4 style="margin: 4px 0 8px;">Lost Mary OS5000</h4>
+                        <span style="color: var(--brand); font-weight: bold; font-size: var(--text-lg);">$12.49</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preserved Backend REST Endpoints Reference -->
+            <div style="background: var(--surface-sunken); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-6);">
+                <h3 style="font-size: var(--text-lg); margin-bottom: var(--space-3);">Preserved Backend REST APIs</h3>
+                <p style="font-size: var(--text-sm); color: var(--text-muted); margin-bottom: var(--space-4);">
+                    The existing Spring Boot REST endpoints remain active and served by the exact same web server:
+                </p>
+                <div style="display: flex; flex-wrap: wrap; gap: var(--space-4);">
+                    <a th:href="@{/api/health}" target="_blank" class="theme-btn" style="text-decoration: none;">GET /api/health</a>
+                    <a th:href="@{/api/campaigns}" target="_blank" class="theme-btn" style="text-decoration: none;">GET /api/campaigns</a>
+                    <a th:href="@{/api/contacts}" target="_blank" class="theme-btn" style="text-decoration: none;">GET /api/contacts</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Customer V2 Footer Fragment -->
+    <div th:replace="~{fragments/storefront/footer :: footer}"></div>
+</body>
+</html>

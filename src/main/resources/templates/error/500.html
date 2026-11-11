@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internal Server Error (500) | Vape Deal Spot</title>
+    
+    <meta name="description" content="We encountered an unexpected error processing your request. Please try again shortly.">
+    <meta name="robots" content="noindex, nofollow">
+    
+    <link rel="stylesheet" th:href="@{/css/customer-v2.css}">
+    <script>
+        (function() {
+            try {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch(e) {}
+        })();
+    </script>
+    <script th:src="@{/js/customer-v2.js}" defer></script>
+</head>
+<body style="min-height: 100vh; display: flex; flex-direction: column; background: var(--color-bg);">
+
+    <!-- Header Fragment -->
+    <div th:replace="~{fragments/storefront/header :: header}"></div>
+
+    <main class="container" style="flex: 1; display: flex; align-items: center; justify-content: center; padding-top: var(--space-16); padding-bottom: var(--space-16);">
+        <div class="empty-state" style="max-width: 580px; width: 100%;">
+            <div class="empty-state-icon" style="font-size: 64px;" aria-hidden="true">⚠️</div>
+            <h1 class="empty-state-title" style="font-family: var(--font-display); font-size: var(--text-4xl); margin-bottom: var(--space-2);">
+                500 — Server Error
+            </h1>
+            <p class="empty-state-message" style="margin-bottom: var(--space-8);">
+                We encountered an unexpected error while processing your request. Our engineering team has been notified. Please refresh or return to the catalog.
+            </p>
+
+            <div style="display: flex; justify-content: center; gap: var(--space-4); flex-wrap: wrap;">
+                <a th:href="@{/}" class="btn btn-primary btn-pill">Return to Homepage</a>
+                <a th:href="@{/search}" class="btn btn-secondary btn-pill">Browse All Products</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{fragments/storefront/footer :: footer}"></div>
+</body>
+</html>
+

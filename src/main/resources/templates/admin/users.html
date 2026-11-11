@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle ?: 'Users Management - Vape Deal Spot'}">Users Management - Vape Deal Spot</title>
+
+    <meta name="_csrf" th:if="${_csrf}" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:if="${_csrf}" th:content="${_csrf.headerName}"/>
+
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <script th:src="@{/js/common.js}"></script>
+    <script th:src="@{/js/admin.js}" defer></script>
+</head>
+<body class="admin-root">
+    <!-- Admin Sidebar -->
+    <div th:replace="~{fragments/admin/sidebar :: sidebar}"></div>
+
+    <div class="admin-main">
+        <!-- Admin Header -->
+        <div th:replace="~{fragments/admin/header :: header}"></div>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <!-- Flash Notifications -->
+            <div th:if="${successMessage}" class="admin-alert admin-alert-success">
+                <span th:text="${successMessage}">Operation successful.</span>
+                <button type="button" class="admin-modal-close" onclick="this.parentElement.remove();">&times;</button>
+            </div>
+            <div th:if="${errorMessage}" class="admin-alert admin-alert-error">
+                <span th:text="${errorMessage}">Error occurred.</span>
+                <button type="button" class="admin-modal-close" onclick="this.parentElement.remove();">&times;</button>
+            </div>
+
+            <!-- Page Title & Toolbar -->
+            <div class="admin-toolbar">
+                <div>
+                    <h1 style="font-size: 20px; font-weight: 700; margin: 0 0 4px; color: #0f172a;">Users Management</h1>
+                    <p style="margin: 0; color: #64748b; font-size: 13px;"
+                       th:text="${currentUser != null and currentUser.isSuperAdmin() ? 'Manage administrative staff and customer accounts across the platform.' : 'Manage customer accounts and access.'}">
+                        Manage accounts across the platform.
+                    </p>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-primary" onclick="openCreateUserModal()">
+                        <span>+</span> Create User
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filter & Search Toolbar -->
+            <form method="get" th:action="@{/admin/users}" class="admin-card" style="padding: 16px; margin-bottom: 20px;">
+                <div class="admin-filter-bar">
+                    <input type="text" name="search" class="search-input" placeholder="Search by name, email, or phone..." th:value="${search}">
+
+                    <!-- Role filter: only visible to Super Admin -->
+                    <select th:if="${currentUser != null and currentUser.isSuperAdmin()}" name="role" class="filter-select">
+                        <option value="">All Roles</option>
+                        <option th:each="r : ${availableRoles}" th:value="${r.name()}" th:text="${r.displayName}" th:selected="${r.name() == selectedRole}"></option>
+                    </select>
+
+                    <select name="status" class="filter-select">
+                        <option value="">All Statuses</option>
+                        <option value="ACTIVE" th:selected="${selectedStatus == 'ACTIVE' or selectedStatus == 'active'}">Active</option>
+                        <option value="INACTIVE" th:selected="${selectedStatus == 'INACTIVE' or selectedStatus == 'inactive'}">Inactive</option>
+                    </select>
+
+                    <button type="submit" class="btn btn-secondary">Filter</button>
+                    <a th:if="${search != '' or selectedRole != '' or selectedStatus != ''}" th:href="@{/admin/users}" class="btn btn-secondary" style="color: #64748b;">Clear</a>
+                </div>
+            </form>
+
+            <!-- Users Table -->
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Last Login</th>
+                            <th style="text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(users)}">
+                            <td colspan="7" style="text-align: center; padding: 32px; color: #64748b;">
+                                No user accounts found matching criteria.
+                            </td>
+                        </tr>
+                        <tr th:each="u : ${users}">
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px; color: #334155;"
+                                         th:text="${#strings.substring(u.fullName != null and !u.fullName.isEmpty() ? u.fullName : u.username, 0, 1)}">U</div>
+                                    <div>
+                                        <div style="font-weight: 600; color: #0f172a;" th:text="${u.fullName}">First Last</div>
+                                        <div style="font-size: 11px; color: #94a3b8;" th:text="${u.id}">usr_123</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span th:text="${u.email}">user@vapedealspot.com</span>
+                            </td>
+                            <td>
+                                <span th:if="${u.isSuperAdmin()}" class="admin-badge admin-badge-info" style="background: rgba(168, 85, 247, 0.15); color: #a855f7;">Super Admin</span>
+                                <span th:if="${u.isAdmin()}" class="admin-badge admin-badge-info">Admin</span>
+                                <span th:if="${u.isCustomer()}" class="admin-badge" style="background: #f1f5f9; color: #475569;">Customer</span>
+                            </td>
+                            <td>
+                                <span th:if="${u.isActive()}" class="admin-badge admin-badge-success">Active</span>
+                                <span th:unless="${u.isActive()}" class="admin-badge admin-badge-danger">Inactive</span>
+                            </td>
+                            <td>
+                                <span th:text="${u.createdAt != null ? #temporals.format(u.createdAt, 'yyyy-MM-dd HH:mm') : '-'}">-</span>
+                            </td>
+                            <td>
+                                <span th:text="${u.lastLoginAt != null ? #temporals.format(u.lastLoginAt, 'yyyy-MM-dd HH:mm') : 'Never'}">Never</span>
+                            </td>
+                            <td style="text-align: right;">
+                                <div style="display: inline-flex; gap: 6px; align-items: center;">
+                                    <!-- Edit Button -->
+                                    <button type="button" class="btn btn-secondary btn-sm"
+                                            th:data-id="${u.id}"
+                                            th:data-firstname="${u.firstName}"
+                                            th:data-lastname="${u.lastName}"
+                                            th:data-email="${u.email}"
+                                            th:data-phone="${u.phone}"
+                                            th:data-role="${u.role != null ? u.role.name() : 'CUSTOMER'}"
+                                            th:data-status="${u.status}"
+                                            onclick="openEditUserModal(this)">
+                                        Edit
+                                    </button>
+
+                                    <!-- Quick Toggle Status Button -->
+                                    <form th:action="@{/admin/users/{id}/toggle-status(id=${u.id})}" method="post" style="display: inline; margin: 0;">
+                                        <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                        <button type="submit" class="btn btn-secondary btn-sm"
+                                                th:title="${u.isActive() ? 'Deactivate account' : 'Reactivate account'}"
+                                                th:text="${u.isActive() ? 'Deactivate' : 'Activate'}">
+                                            Toggle
+                                        </button>
+                                    </form>
+
+                                    <!-- Deactivate / Delete Button -->
+                                    <form th:action="@{/admin/users/{id}/delete(id=${u.id})}" method="post" style="display: inline; margin: 0;"
+                                          onsubmit="return confirm('Are you sure you want to deactivate account ' + this.getAttribute('data-email') + '? Active sessions will be terminated.');"
+                                          th:data-email="${u.email}">
+                                        <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                        <button type="submit" class="btn btn-outline-danger btn-sm" title="Deactivate user account">
+                                            Disable
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create User Modal -->
+    <div id="createUserModal" class="admin-modal-backdrop">
+        <div class="admin-modal">
+            <div class="admin-modal-header">
+                <h3 th:text="${currentUser != null and currentUser.isSuperAdmin() ? 'Create User Account' : 'Create Customer Account'}">Create User</h3>
+                <button type="button" class="admin-modal-close" onclick="closeCreateUserModal()">&times;</button>
+            </div>
+            <form th:action="@{/admin/users}" method="post">
+                <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <div class="admin-modal-body">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label" for="createFirstName">First Name *</label>
+                            <input type="text" id="createFirstName" name="firstName" class="form-input" required placeholder="e.g. John">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="createLastName">Last Name *</label>
+                            <input type="text" id="createLastName" name="lastName" class="form-input" required placeholder="e.g. Doe">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label" for="createEmail">Email Address *</label>
+                            <input type="email" id="createEmail" name="email" class="form-input" required placeholder="user@vapedealspot.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="createPhone">Phone (Optional)</label>
+                            <input type="tel" id="createPhone" name="phone" class="form-input" placeholder="+1 (555) 000-0000">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="createPassword">Initial Password *</label>
+                        <input type="password" id="createPassword" name="password" class="form-input" required minlength="8" placeholder="At least 8 characters">
+                        <div class="form-help">Hashed securely via BCrypt with individual salt.</div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label" for="createRole">Assigned Role *</label>
+                            <!-- Super Admin can select role -->
+                            <select th:if="${currentUser != null and currentUser.isSuperAdmin()}" id="createRole" name="role" class="form-select" required>
+                                <option th:each="r : ${availableRoles}" th:value="${r.name()}" th:text="${r.displayName}"></option>
+                            </select>
+                            <!-- Admin is restricted to Customer -->
+                            <div th:unless="${currentUser != null and currentUser.isSuperAdmin()}">
+                                <input type="hidden" name="role" value="CUSTOMER" />
+                                <input type="text" class="form-input" value="Customer" readonly disabled style="background: #f1f5f9; color: #64748b;" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="createStatus">Account Status</label>
+                            <select id="createStatus" name="status" class="form-select">
+                                <option value="ACTIVE" selected>Active</option>
+                                <option value="INACTIVE">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="admin-modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeCreateUserModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div id="editUserModal" class="admin-modal-backdrop">
+        <div class="admin-modal">
+            <div class="admin-modal-header">
+                <h3>Edit User Profile</h3>
+                <button type="button" class="admin-modal-close" onclick="closeEditUserModal()">&times;</button>
+            </div>
+            <form id="editUserForm" method="post">
+                <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <div class="admin-modal-body">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label" for="editFirstName">First Name *</label>
+                            <input type="text" id="editFirstName" name="firstName" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="editLastName">Last Name *</label>
+                            <input type="text" id="editLastName" name="lastName" class="form-input" required>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label" for="editEmail">Email Address *</label>
+                            <input type="email" id="editEmail" name="email" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="editPhone">Phone (Optional)</label>
+                            <input type="tel" id="editPhone" name="phone" class="form-input">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label" for="editRole">Assigned Role *</label>
+                            <!-- Super Admin can reassign roles -->
+                            <select th:if="${currentUser != null and currentUser.isSuperAdmin()}" id="editRole" name="role" class="form-select" required>
+                                <option th:each="r : ${availableRoles}" th:value="${r.name()}" th:text="${r.displayName}"></option>
+                            </select>
+                            <!-- Admin is restricted to Customer -->
+                            <div th:unless="${currentUser != null and currentUser.isSuperAdmin()}">
+                                <input type="hidden" id="editRoleHidden" name="role" value="CUSTOMER" />
+                                <input type="text" class="form-input" value="Customer" readonly disabled style="background: #f1f5f9; color: #64748b;" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="editStatus">Account Status</label>
+                            <select id="editStatus" name="status" class="form-select">
+                                <option value="ACTIVE">Active</option>
+                                <option value="INACTIVE">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #f1f5f9;">
+                        <label class="form-label" for="editPassword">Reset Password (Optional)</label>
+                        <input type="password" id="editPassword" name="password" class="form-input" minlength="8" placeholder="Leave blank to keep existing password">
+                        <div class="form-help">Only enter a value if you wish to reset this user's password. This invalidates existing sessions.</div>
+                    </div>
+                </div>
+                <div class="admin-modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditUserModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openCreateUserModal() {
+            document.getElementById('createUserModal').classList.add('open');
+        }
+        function closeCreateUserModal() {
+            document.getElementById('createUserModal').classList.remove('open');
+        }
+        function openEditUserModal(btn) {
+            var id = btn.getAttribute('data-id');
+            var firstName = btn.getAttribute('data-firstname');
+            var lastName = btn.getAttribute('data-lastname');
+            var email = btn.getAttribute('data-email');
+            var phone = btn.getAttribute('data-phone');
+            var role = btn.getAttribute('data-role');
+            var status = btn.getAttribute('data-status');
+
+            document.getElementById('editFirstName').value = firstName || '';
+            document.getElementById('editLastName').value = lastName || '';
+            document.getElementById('editEmail').value = email || '';
+            if (document.getElementById('editPhone')) {
+                document.getElementById('editPhone').value = phone || '';
+            }
+            if (document.getElementById('editRole')) {
+                document.getElementById('editRole').value = role || 'CUSTOMER';
+            }
+            document.getElementById('editStatus').value = (status || 'ACTIVE').toUpperCase();
+            document.getElementById('editPassword').value = '';
+
+            var form = document.getElementById('editUserForm');
+            form.action = '/admin/users/' + id + '/update';
+
+            document.getElementById('editUserModal').classList.add('open');
+        }
+        function closeEditUserModal() {
+            document.getElementById('editUserModal').classList.remove('open');
+        }
+    </script>
+</body>
+</html>

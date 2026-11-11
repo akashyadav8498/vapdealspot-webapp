@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle != null ? pageTitle : 'Vape Deals & Coupons | Vape Deal Spot'}">Vape Deals & Coupons | Vape Deal Spot</title>
+    
+    <meta name="description" th:content="${metaDescription != null ? metaDescription : 'Discover the latest verified discounts and promo codes from top vape retailers.'}">
+    
+    <link rel="stylesheet" th:href="@{/css/customer-v2.css}">
+    <script>
+        (function() {
+            try {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch(e) {}
+        })();
+    </script>
+    <script th:src="@{/js/customer-v2.js}" defer></script>
+</head>
+<body style="min-height: 100vh; display: flex; flex-direction: column; background: var(--color-bg);">
+
+    <!-- Header Fragment -->
+    <div th:replace="~{fragments/storefront/header :: header}"></div>
+
+    <main class="container" style="flex: 1; padding-top: var(--space-8); padding-bottom: var(--space-16);">
+        <!-- Breadcrumbs -->
+        <nav aria-label="Breadcrumb" style="margin-bottom: var(--space-4);">
+            <ol class="breadcrumb-list" style="display: flex; gap: 8px; list-style: none; padding: 0; margin: 0; font-size: var(--text-sm); color: var(--text-muted);">
+                <li><a th:href="@{/}" style="color: var(--text-muted); text-decoration: none;">Home</a></li>
+                <li>/</li>
+                <li style="color: var(--text-strong); font-weight: var(--weight-medium);" aria-current="page">Deals & Coupons</li>
+            </ol>
+        </nav>
+
+        <div style="margin-bottom: var(--space-8);">
+            <div style="display: flex; align-items: center; gap: 8px; font-size: var(--text-xs); font-weight: var(--weight-bold); text-transform: uppercase; letter-spacing: 0.05em; color: var(--success); margin-bottom: 6px;">
+                <span>✅</span>
+                <span>Verified Vape Promo Codes</span>
+            </div>
+            <h1 style="font-family: var(--font-display); font-size: var(--text-3xl); font-weight: var(--weight-bold); margin: 0 0 var(--space-2); color: var(--text-strong);">
+                Today's Best Vape Deals & Coupons
+            </h1>
+            <p style="font-size: var(--text-base); color: var(--text-muted); margin: 0;">
+                Hand-tested coupon codes and limited-time promotional sales across verified vape shops.
+            </p>
+        </div>
+
+        <!-- Deals Grid -->
+        <div class="deals-grid" th:if="${deals != null and not #lists.isEmpty(deals)}">
+            <div th:each="deal : ${deals}" class="card deal-card">
+                <div class="deal-card-header">
+                    <div>
+                        <div class="deal-card-merchant" th:text="${deal.merchantName}">Element Vape</div>
+                        <h2 class="deal-card-title" th:text="${deal.title}">20% Off All SMOK Devices</h2>
+                    </div>
+                    <div class="deal-card-badges">
+                        <span class="badge badge-warning" th:if="${deal.discountValue != null}" th:text="${deal.discountValue}">20% OFF</span>
+                        <span class="badge badge-success" th:if="${deal.verified}">✓ Verified</span>
+                    </div>
+                </div>
+
+                <div class="deal-card-footer">
+                    <div>
+                        <div th:if="${deal.code != null}" class="coupon-code-wrapper" style="margin-bottom: 4px;">
+                            <code class="coupon-code" th:text="${deal.code}">SMOK20</code>
+                            <button type="button" class="btn btn-secondary btn-sm"
+                                    th:attr="data-copy=${deal.code}"
+                                    onclick="copyCouponCode(this)">Copy</button>
+                        </div>
+                        <span class="deal-expiry" th:if="${deal.expiryNotice != null}" th:text="${deal.expiryNotice}">Expires in 2 days</span>
+                    </div>
+
+                    <a th:href="${deal.affiliateUrl}"
+                       target="_blank"
+                       rel="nofollow sponsored noopener noreferrer"
+                       class="btn btn-primary btn-sm">
+                        <span>Get Deal &rarr;</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{fragments/storefront/footer :: footer}"></div>
+</body>
+</html>
+

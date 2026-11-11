@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle != null ? pageTitle : 'Create an Account | Vape Deal Spot'}">Create an Account | Vape Deal Spot</title>
+    <meta name="description" content="Create a free Vape Deal Spot account to unlock personalized deal alerts, save coupons, and track top vape discounts.">
+    <link rel="stylesheet" th:href="@{/css/customer-v2.css}">
+    <script>
+        (function() {
+            try {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch(e) {}
+        })();
+    </script>
+    <script th:src="@{/js/customer-v2.js}" defer></script>
+</head>
+<body style="min-height: 100vh; display: flex; flex-direction: column; background: var(--color-bg);">
+
+    <!-- Header Fragment -->
+    <div th:replace="~{fragments/storefront/header :: header}"></div>
+
+    <main class="container" style="flex: 1; padding-top: var(--space-8); padding-bottom: var(--space-16); display: flex; flex-direction: column; align-items: center; justify-content: center;">
+
+        <!-- Breadcrumbs -->
+        <nav aria-label="Breadcrumb" style="width: 100%; max-width: 480px; margin-bottom: var(--space-4);">
+            <ol style="display: flex; gap: 8px; list-style: none; padding: 0; margin: 0; font-size: var(--text-sm); color: var(--text-muted);">
+                <li><a th:href="@{/}" style="color: var(--text-muted); text-decoration: none;">Home</a></li>
+                <li>/</li>
+                <li style="color: var(--text-strong); font-weight: var(--weight-medium);" aria-current="page">Create Account</li>
+            </ol>
+        </nav>
+
+        <div class="card" style="width: 100%; max-width: 480px; padding: var(--space-8); background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);">
+            <div style="text-align: center; margin-bottom: var(--space-6);">
+                <div style="font-size: 32px; margin-bottom: var(--space-2);">🎁</div>
+                <h1 style="font-family: var(--font-display); font-size: var(--text-2xl); font-weight: var(--weight-bold); color: var(--text-strong); margin: 0 0 var(--space-2);">
+                    Join Vape Deal Spot
+                </h1>
+                <p style="font-size: var(--text-sm); color: var(--text-muted); margin: 0;">
+                    Create a free account to track deals and coupons
+                </p>
+            </div>
+
+            <!-- Error Notification -->
+            <div th:if="${error}" style="padding: var(--space-3) var(--space-4); background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: var(--radius-md); color: #ef4444; font-size: var(--text-sm); margin-bottom: var(--space-4); display: flex; align-items: center; gap: var(--space-2);" role="alert">
+                <span>⚠️</span>
+                <span th:text="${error}">Registration error</span>
+            </div>
+
+            <form th:action="@{/register}" method="post" style="display: flex; flex-direction: column; gap: var(--space-4);">
+                <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);">
+                    <div>
+                        <label for="firstName" style="display: block; font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--text-strong); margin-bottom: var(--space-1);">First Name</label>
+                        <input type="text"
+                               id="firstName"
+                               name="firstName"
+                               th:value="${firstName}"
+                               required
+                               autofocus
+                               placeholder="Alex"
+                               style="width: 100%; padding: 10px 14px; font-size: var(--text-sm); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg); color: var(--text-strong); box-sizing: border-box;">
+                    </div>
+                    <div>
+                        <label for="lastName" style="display: block; font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--text-strong); margin-bottom: var(--space-1);">Last Name</label>
+                        <input type="text"
+                               id="lastName"
+                               name="lastName"
+                               th:value="${lastName}"
+                               required
+                               placeholder="Smith"
+                               style="width: 100%; padding: 10px 14px; font-size: var(--text-sm); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg); color: var(--text-strong); box-sizing: border-box;">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="email" style="display: block; font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--text-strong); margin-bottom: var(--space-1);">Email Address</label>
+                    <input type="email"
+                           id="email"
+                           name="email"
+                           th:value="${email}"
+                           required
+                           autocomplete="email"
+                           placeholder="you@example.com"
+                           style="width: 100%; padding: 10px 14px; font-size: var(--text-sm); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg); color: var(--text-strong); box-sizing: border-box;">
+                </div>
+
+                <div>
+                    <label for="phone" style="display: block; font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--text-strong); margin-bottom: var(--space-1);">Phone <span style="color: var(--text-muted); font-size: var(--text-xs);">(optional)</span></label>
+                    <input type="tel"
+                           id="phone"
+                           name="phone"
+                           th:value="${phone}"
+                           autocomplete="tel"
+                           placeholder="+1 (555) 000-0000"
+                           style="width: 100%; padding: 10px 14px; font-size: var(--text-sm); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg); color: var(--text-strong); box-sizing: border-box;">
+                </div>
+
+                <div>
+                    <label for="password" style="display: block; font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--text-strong); margin-bottom: var(--space-1);">Password</label>
+                    <input type="password"
+                           id="password"
+                           name="password"
+                           required
+                           minlength="8"
+                           autocomplete="new-password"
+                           placeholder="At least 8 characters"
+                           style="width: 100%; padding: 10px 14px; font-size: var(--text-sm); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg); color: var(--text-strong); box-sizing: border-box;">
+                </div>
+
+                <div>
+                    <label for="confirmPassword" style="display: block; font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--text-strong); margin-bottom: var(--space-1);">Confirm Password</label>
+                    <input type="password"
+                           id="confirmPassword"
+                           name="confirmPassword"
+                           required
+                           minlength="8"
+                           autocomplete="new-password"
+                           placeholder="Re-enter password"
+                           style="width: 100%; padding: 10px 14px; font-size: var(--text-sm); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg); color: var(--text-strong); box-sizing: border-box;">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-pill" style="width: 100%; margin-top: var(--space-2); padding: 12px; font-weight: var(--weight-bold); cursor: pointer;">
+                    Create Account
+                </button>
+            </form>
+
+            <div style="margin-top: var(--space-6); text-align: center; font-size: var(--text-sm); color: var(--text-muted); border-top: 1px solid var(--color-border); padding-top: var(--space-4);">
+                <span>Already have an account? </span>
+                <a th:href="@{/login}" style="color: var(--primary); font-weight: var(--weight-semibold); text-decoration: none;">Sign in here</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{fragments/storefront/footer :: footer}"></div>
+</body>
+</html>
+

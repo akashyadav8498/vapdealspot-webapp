@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle != null ? pageTitle : 'Vape Deal Spot | Compare Vape Prices & Find Deals'}">Vape Deal Spot</title>
+    
+    <meta name="description" th:content="${metaDescription != null ? metaDescription : 'Search pods, mods, e-liquids and CBD. Compare prices across 25+ vape retailers and never overpay again.'}">
+    <link rel="canonical" th:if="${canonicalUrl}" th:href="${canonicalUrl}">
+
+    <!-- Open Graph SEO Metadata -->
+    <meta property="og:title" th:content="${pageTitle != null ? pageTitle : 'Vape Deal Spot'}">
+    <meta property="og:description" th:content="${metaDescription != null ? metaDescription : 'Compare vape prices across 25+ retailers.'}">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/OfficialLogo.jpeg">
+
+    <!-- Customer V2 Core Stylesheet -->
+    <link rel="stylesheet" th:href="@{/css/customer-v2.css}">
+    
+    <!-- Theme Script (executed immediately to prevent FOUC) -->
+    <script>
+        (function() {
+            try {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch(e) {}
+        })();
+    </script>
+    <script th:src="@{/js/customer-v2.js}" defer></script>
+</head>
+<body style="min-height: 100vh; display: flex; flex-direction: column; background: var(--color-bg);">
+
+    <!-- Customer V2 Header Fragment -->
+    <div th:replace="~{fragments/storefront/header :: header}"></div>
+
+    <!-- Main Content: Dynamic Published CMS Sections -->
+    <main style="flex: 1;">
+        <th:block th:each="sec : ${sections}">
+            <!-- 1. Hero Section -->
+            <th:block th:if="${sec.type == 'hero' or sec.type == 'hero_banner'}">
+                <div th:replace="~{fragments/storefront/sections/hero-banner :: hero(sec=${sec})}"></div>
+            </th:block>
+
+            <!-- 2. Categories Strip Section -->
+            <th:block th:if="${sec.type == 'categories' or sec.type == 'category_strip'}">
+                <div th:replace="~{fragments/storefront/sections/category-strip :: categoryStrip(sec=${sec})}"></div>
+            </th:block>
+
+            <!-- 3. Top Savings Section -->
+            <th:block th:if="${sec.type == 'top_savings'}">
+                <div th:replace="~{fragments/storefront/sections/top-savings :: topSavings(sec=${sec}, products=${topSavingsProducts})}"></div>
+            </th:block>
+
+            <!-- 4. New Arrivals Section -->
+            <th:block th:if="${sec.type == 'new_arrivals'}">
+                <div th:replace="~{fragments/storefront/sections/new-arrivals :: newArrivals(sec=${sec}, products=${newArrivalProducts})}"></div>
+            </th:block>
+
+            <!-- 5. Coupons Section -->
+            <th:block th:if="${sec.type == 'coupons'}">
+                <div th:replace="~{fragments/storefront/sections/coupons :: coupons(sec=${sec})}"></div>
+            </th:block>
+
+            <!-- 6. Editorial Section -->
+            <th:block th:if="${sec.type == 'editorial'}">
+                <div th:replace="~{fragments/storefront/sections/editorial :: editorial(sec=${sec})}"></div>
+            </th:block>
+
+            <!-- 7. Recent Reads Section -->
+            <th:block th:if="${sec.type == 'recent_reads'}">
+                <div th:replace="~{fragments/storefront/sections/recent-reads :: recentReads(sec=${sec})}"></div>
+            </th:block>
+        </th:block>
+    </main>
+
+    <!-- Customer V2 Footer Fragment -->
+    <div th:replace="~{fragments/storefront/footer :: footer}"></div>
+</body>
+</html>
+

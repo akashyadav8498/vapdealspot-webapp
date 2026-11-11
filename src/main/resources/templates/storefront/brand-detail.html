@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle != null ? pageTitle : 'Brand | Vape Deal Spot'}">Brand | Vape Deal Spot</title>
+    
+    <meta name="description" th:content="${metaDescription != null ? metaDescription : 'Compare prices across 25+ trusted retailers.'}">
+    
+    <link rel="stylesheet" th:href="@{/css/customer-v2.css}">
+    <script>
+        (function() {
+            try {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch(e) {}
+        })();
+    </script>
+    <script th:src="@{/js/customer-v2.js}" defer></script>
+</head>
+<body style="min-height: 100vh; display: flex; flex-direction: column; background: var(--color-bg);">
+
+    <!-- Header Fragment -->
+    <div th:replace="~{fragments/storefront/header :: header}"></div>
+
+    <main class="container listing-layout" style="flex: 1;">
+        <!-- Breadcrumbs Fragment -->
+        <div th:replace="~{fragments/storefront/breadcrumbs :: breadcrumbs(items=${breadcrumbs})}"></div>
+
+        <!-- Brand Header -->
+        <div class="listing-header">
+            <h1 class="listing-title" th:text="${brand.name} + ' Vape Products'">SMOK Vape Products</h1>
+            <p class="listing-description" th:if="${brand.description != null}" th:text="${brand.description}">
+                Compare prices, coils, kits and tanks across 25+ verified shops.
+            </p>
+        </div>
+
+        <div class="listing-body">
+            <!-- Filter Sidebar -->
+            <aside class="filter-sidebar">
+                <form th:action="@{/brand/{slug}(slug=${brand.slug})}" method="get" id="filterForm">
+                    <!-- In Stock Filter -->
+                    <div class="filter-section">
+                        <div class="filter-title">Availability</div>
+                        <div class="filter-list">
+                            <label class="filter-item">
+                                <input type="checkbox" name="instock" value="true" th:checked="${inStockOnly}" onchange="document.getElementById('filterForm').submit()">
+                                <span>In Stock Only</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Sort Preservation -->
+                    <input type="hidden" name="sort" th:value="${sort}">
+
+                    <div style="margin-top: var(--space-4);">
+                        <a th:href="@{/brand/{slug}(slug=${brand.slug})}" class="btn btn-secondary btn-sm" style="width: 100%; text-align: center; display: block;">Reset Filters</a>
+                    </div>
+                </form>
+            </aside>
+
+            <!-- Results Column -->
+            <div class="results-column">
+                <div class="listing-toolbar">
+                    <div class="listing-count">
+                        Found <strong th:text="${totalResults}">4</strong> products
+                    </div>
+
+                    <!-- Sort Dropdown -->
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label for="sortSelect" style="font-size: var(--text-sm); color: var(--text-muted);">Sort by:</label>
+                        <select id="sortSelect" class="form-input" style="padding: 6px 12px; font-size: var(--text-sm); border-radius: var(--radius-sm);"
+                                onchange="location.href=this.value;">
+                            <option th:value="@{/brand/{slug}(slug=${brand.slug}, instock=${inStockOnly}, sort='default')}"
+                                    th:selected="${sort == 'default' or sort == null}">Relevance</option>
+                            <option th:value="@{/brand/{slug}(slug=${brand.slug}, instock=${inStockOnly}, sort='price-asc')}"
+                                    th:selected="${sort == 'price-asc'}">Price: Low to High</option>
+                            <option th:value="@{/brand/{slug}(slug=${brand.slug}, instock=${inStockOnly}, sort='price-desc')}"
+                                    th:selected="${sort == 'price-desc'}">Price: High to Low</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state" th:if="${products == null or #lists.isEmpty(products)}">
+                    <div class="empty-state-icon" aria-hidden="true">🏷️</div>
+                    <h2 class="empty-state-title">No products found for this brand</h2>
+                    <p class="empty-state-message">
+                        Try clearing active filters or explore other popular brands.
+                    </p>
+                    <a th:href="@{/brands}" class="btn btn-primary btn-pill">Browse All Brands</a>
+                </div>
+
+                <!-- Product Grid -->
+                <div class="product-grid" th:if="${products != null and not #lists.isEmpty(products)}">
+                    <th:block th:each="prod : ${products}">
+                        <div th:replace="~{fragments/storefront/product-card :: card(prod=${prod})}"></div>
+                    </th:block>
+                </div>
+
+                <!-- Pagination -->
+                <nav th:if="${totalPages > 1}" aria-label="Brand pagination" style="display: flex; justify-content: center; gap: 8px; margin-top: var(--space-10);">
+                    <a th:if="${currentPage > 0}"
+                       th:href="@{/brand/{slug}(slug=${brand.slug}, instock=${inStockOnly}, sort=${sort}, page=${currentPage - 1})}"
+                       class="btn btn-secondary btn-sm">&larr; Previous</a>
+
+                    <span style="display: flex; align-items: center; padding: 0 12px; font-size: var(--text-sm); color: var(--text-muted);"
+                          th:text="'Page ' + (${currentPage} + 1) + ' of ' + ${totalPages}">Page 1 of 3</span>
+
+                    <a th:if="${currentPage < totalPages - 1}"
+                       th:href="@{/brand/{slug}(slug=${brand.slug}, instock=${inStockOnly}, sort=${sort}, page=${currentPage + 1})}"
+                       class="btn btn-secondary btn-sm">Next &rarr;</a>
+                </nav>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{fragments/storefront/footer :: footer}"></div>
+</body>
+</html>
+

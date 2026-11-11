@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <nav class="desktop-nav" th:fragment="navigation" aria-label="Primary Navigation">
+        <a th:href="@{/best-of}" class="nav-link" th:classappend="${activeNav == 'best-of'} ? 'active' : ''">Best Of</a>
+        <a th:href="@{/category/pod-vapes}" class="nav-link" th:classappend="${activeNav == 'devices'} ? 'active' : ''">Devices</a>
+        <a th:href="@{/category/tanks}" class="nav-link" th:classappend="${activeNav == 'tanks'} ? 'active' : ''">Tanks</a>
+        <a th:href="@{/category/e-liquids}" class="nav-link" th:classappend="${activeNav == 'e-liquids'} ? 'active' : ''">E-Liquids</a>
+        <a th:href="@{/category/cbd-thc}" class="nav-link" th:classappend="${activeNav == 'cbd-thc'} ? 'active' : ''">CBD / THC</a>
+        <a th:href="@{/deals}" class="nav-link" th:classappend="${activeNav == 'deals'} ? 'active' : ''">Deals</a>
+        <a th:href="@{/brands}" class="nav-link" th:classappend="${activeNav == 'brands'} ? 'active' : ''">Brands</a>
+    </nav>
+</body>
+</html>

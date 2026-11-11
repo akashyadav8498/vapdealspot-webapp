@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle != null ? pageTitle : 'Blog & News | Vape Deal Spot'}">Blog & News | Vape Deal Spot</title>
+    
+    <meta name="description" th:content="${metaDescription != null ? metaDescription : 'Read the latest news, hardware comparisons, and battery safety guides on Vape Deal Spot.'}">
+    
+    <link rel="stylesheet" th:href="@{/css/customer-v2.css}">
+    <script>
+        (function() {
+            try {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch(e) {}
+        })();
+    </script>
+    <script th:src="@{/js/customer-v2.js}" defer></script>
+</head>
+<body style="min-height: 100vh; display: flex; flex-direction: column; background: var(--color-bg);">
+
+    <!-- Header Fragment -->
+    <div th:replace="~{fragments/storefront/header :: header}"></div>
+
+    <main class="container" style="flex: 1; padding-top: var(--space-8); padding-bottom: var(--space-16);">
+        <!-- Breadcrumbs -->
+        <nav aria-label="Breadcrumb" style="margin-bottom: var(--space-4);">
+            <ol class="breadcrumb-list" style="display: flex; gap: 8px; list-style: none; padding: 0; margin: 0; font-size: var(--text-sm); color: var(--text-muted);">
+                <li><a th:href="@{/}" style="color: var(--text-muted); text-decoration: none;">Home</a></li>
+                <li>/</li>
+                <li style="color: var(--text-strong); font-weight: var(--weight-medium);" aria-current="page">Blog & News</li>
+            </ol>
+        </nav>
+
+        <div style="margin-bottom: var(--space-8);">
+            <div style="display: flex; align-items: center; gap: 8px; font-size: var(--text-xs); font-weight: var(--weight-bold); text-transform: uppercase; letter-spacing: 0.05em; color: var(--brand); margin-bottom: 6px;">
+                <span>📰</span>
+                <span>Vape Deal Spot Guides</span>
+            </div>
+            <h1 style="font-family: var(--font-display); font-size: var(--text-3xl); font-weight: var(--weight-bold); margin: 0 0 var(--space-2); color: var(--text-strong);">
+                Vape News, Reviews & Safety Guides
+            </h1>
+            <p style="font-size: var(--text-base); color: var(--text-muted); margin: 0;">
+                In-depth articles covering hardware choices, coil longevity, nicotine salts, and money-saving strategies.
+            </p>
+        </div>
+
+        <div class="reads-grid" th:if="${posts != null and not #lists.isEmpty(posts)}">
+            <article th:each="post : ${posts}" class="read-card">
+                <span class="read-date" th:text="${post['date']}">June 12, 2026</span>
+                <h2 class="read-title" th:text="${post['title']}">How to Choose Your First Refillable Pod System</h2>
+                <p class="read-excerpt" th:text="${post['excerpt']}">Pod kits have come a long way. Here is our breakdown of draw resistance, coil life, and maintenance costs.</p>
+                <div style="margin-top: auto; padding-top: var(--space-4);">
+                    <span style="font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--brand);">Read Guide &rarr;</span>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{fragments/storefront/footer :: footer}"></div>
+</body>
+</html>
+

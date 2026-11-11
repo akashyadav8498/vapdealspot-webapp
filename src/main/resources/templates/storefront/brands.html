@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle != null ? pageTitle : 'Vape Brands Directory | Vape Deal Spot'}">Vape Brands Directory | Vape Deal Spot</title>
+    
+    <meta name="description" th:content="${metaDescription != null ? metaDescription : 'Discover top vape hardware and e-liquid brands on the market. Compare prices across top retailers.'}">
+    
+    <link rel="stylesheet" th:href="@{/css/customer-v2.css}">
+    <script>
+        (function() {
+            try {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch(e) {}
+        })();
+    </script>
+    <script th:src="@{/js/customer-v2.js}" defer></script>
+</head>
+<body style="min-height: 100vh; display: flex; flex-direction: column; background: var(--color-bg);">
+
+    <!-- Header Fragment -->
+    <div th:replace="~{fragments/storefront/header :: header}"></div>
+
+    <main class="container" style="flex: 1; padding-top: var(--space-8); padding-bottom: var(--space-16);">
+        <!-- Breadcrumbs -->
+        <nav aria-label="Breadcrumb" style="margin-bottom: var(--space-4);">
+            <ol class="breadcrumb-list" style="display: flex; gap: 8px; list-style: none; padding: 0; margin: 0; font-size: var(--text-sm); color: var(--text-muted);">
+                <li><a th:href="@{/}" style="color: var(--text-muted); text-decoration: none;">Home</a></li>
+                <li>/</li>
+                <li style="color: var(--text-strong); font-weight: var(--weight-medium);" aria-current="page">Brands</li>
+            </ol>
+        </nav>
+
+        <div style="margin-bottom: var(--space-8);">
+            <h1 style="font-family: var(--font-display); font-size: var(--text-3xl); font-weight: var(--weight-bold); margin: 0 0 var(--space-2); color: var(--text-strong);">
+                Vape Brands Directory
+            </h1>
+            <p style="font-size: var(--text-base); color: var(--text-muted); margin: 0;">
+                Compare prices, coupons, and discounts across all leading vape hardware manufacturers and e-liquid brands.
+            </p>
+        </div>
+
+        <div class="brands-grid" th:if="${brands != null and not #lists.isEmpty(brands)}">
+            <a th:each="b : ${brands}"
+               th:href="@{/brand/{slug}(slug=${b.slug})}"
+               class="brand-card">
+                <h2 class="brand-card-name" th:text="${b.name}">SMOK</h2>
+                <p class="brand-card-desc" th:text="${b.description != null ? b.description : 'Explore deals, tanks, pods, and coils from ' + b.name + '.'}">
+                    Leading manufacturer of pod systems and sub-ohm kits.
+                </p>
+                <div class="brand-card-count">
+                    <span th:text="${b.productCount}">4</span>
+                    <span th:text="${b.productCount == 1 ? ' Product' : ' Products'}"> Products</span>
+                    <span> &rarr;</span>
+                </div>
+            </a>
+        </div>
+    </main>
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{fragments/storefront/footer :: footer}"></div>
+</body>
+</html>
+

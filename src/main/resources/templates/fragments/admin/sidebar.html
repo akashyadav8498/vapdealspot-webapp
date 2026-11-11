@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <aside class="admin-sidebar" th:fragment="sidebar">
+        <div class="admin-sidebar-header">
+            <span style="font-size: 20px;">⚡</span>
+            <span>Vape Deal Spot</span>
+        </div>
+        <nav style="display: flex; flex-direction: column; gap: 4px;">
+            <a th:href="@{/admin/dashboard}" class="admin-nav-item" th:classappend="${activeNav == 'dashboard'} ? 'active' : ''">
+                <span>📊 Dashboard</span>
+            </a>
+
+            <a th:href="@{/admin/products}" class="admin-nav-item" th:classappend="${activeNav == 'products'} ? 'active' : ''">
+                <span>📦 Products</span>
+            </a>
+
+            <a th:href="@{/admin/page-builder}" class="admin-nav-item" th:classappend="${activeNav == 'page-builder'} ? 'active' : ''">
+                <span>🎨 Page Builder</span>
+            </a>
+
+            <div style="margin-top: 12px; margin-bottom: 4px; padding: 0 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b;">
+                Access Control
+            </div>
+
+            <a th:href="@{/admin/users}" class="admin-nav-item" th:classappend="${activeNav == 'users'} ? 'active' : ''">
+                <span>👥 Users</span>
+            </a>
+        </nav>
+
+        <div style="margin-top: auto; padding: 12px; background: rgba(255,255,255,0.05); border-radius: var(--admin-radius); font-size: 12px;">
+            <p style="margin: 0; font-weight: 600; color: #ffffff;">Spring Boot Full-Stack</p>
+            <p style="margin: 4px 0 0; color: #94a3b8;">Milestone 19 Product Management</p>
+        </div>
+    </aside>
+</body>
+</html>

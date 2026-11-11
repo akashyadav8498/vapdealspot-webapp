@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <section class="coupon-section" th:fragment="coupons(sec)">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-eyebrow" style="color: var(--warning);" th:if="${sec.props['eyebrowText']}">
+                    <span aria-hidden="true" th:text="${sec.props['eyebrowIcon'] ?: '🏷️'}">🏷️</span>
+                    <span th:text="${sec.props['eyebrowText']}">Verified today</span>
+                </div>
+                <h2 class="section-title" th:text="${sec.props['title'] ?: 'Coupons & discount codes'}">Coupons & discount codes</h2>
+            </div>
+            <div class="coupon-grid" th:if="${sec.props['coupons'] != null}">
+                <div th:each="cp : ${sec.props['coupons']}" class="card coupon-card">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <span class="coupon-store" th:text="${cp['store']}">Element Vape</span>
+                            <span class="badge badge-success" th:if="${cp['verified'] == true}">✓ Verified</span>
+                        </div>
+                        <h3 class="coupon-offer" th:text="${cp['offer']}">15% off all e-liquids and nic salts</h3>
+                    </div>
+                    <div class="coupon-bottom-row">
+                        <div class="coupon-code-wrapper">
+                            <code class="coupon-code" th:text="${cp['code']}">JUICE15</code>
+                            <button type="button" class="btn btn-secondary btn-sm"
+                                    th:attr="data-copy=${cp['code']}"
+                                    onclick="copyCouponCode(this)">Copy</button>
+                        </div>
+                        <a th:if="${cp['url'] != null}"
+                           th:href="${cp['url']}"
+                           target="_blank"
+                           rel="nofollow sponsored noopener noreferrer"
+                           class="btn btn-primary btn-sm">Shop Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
+

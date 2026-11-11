@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <section class="hero-section" th:fragment="hero(sec)">
+        <div class="container hero-inner">
+            <span class="hero-pill" th:if="${sec.props['pillText']}">
+                <span aria-hidden="true" th:text="${sec.props['pillIcon'] ?: '🏷️'}">🏷️</span>
+                <span th:text="${sec.props['pillText']}">Prices from 25+ vape shops</span>
+            </span>
+
+            <h1 class="hero-title">
+                <span th:text="${sec.props['titlePrimary'] ?: 'Compare vape prices.'}">Compare vape prices.</span><br/>
+                <span class="hero-title-highlight" th:text="${sec.props['titleHighlight'] ?: 'Never overpay again.'}">Never overpay again.</span>
+            </h1>
+
+            <p class="hero-lede" th:text="${sec.props['ledeText'] ?: 'Search pods, mods, e-liquids and CBD. We check the shops ourselves — no merchant feeds, no copied listings.'}">
+                Search pods, mods, e-liquids and CBD. We check the shops ourselves — no merchant feeds, no copied listings.
+            </p>
+
+            <div class="hero-search-wrapper">
+                <form th:action="@{/search}" method="get" class="search-form hero-form" role="search">
+                    <div class="search-input-wrapper">
+                        <span class="search-icon" aria-hidden="true">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </span>
+                        <input type="search" name="q" placeholder="Search vapes, juices, CBD..." aria-label="Search products" class="search-input">
+                        <button type="submit" class="btn btn-primary btn-pill btn-normal">Search</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="hero-stats" th:if="${sec.props['showStats'] == true && sec.props['stats'] != null}">
+                <span th:each="stat : ${sec.props['stats']}" class="hero-stat-item">
+                    <span aria-hidden="true" th:text="${stat['icon']}">📦</span>
+                    <span th:text="${stat['text']}">1,475 products with a live price</span>
+                </span>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
+

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <section class="product-section" th:fragment="topSavings(sec, products)">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-eyebrow" style="color: var(--success);" th:if="${sec.props['eyebrow']}" th:text="${sec.props['eyebrow']}">Biggest gaps between shops</div>
+                <h2 class="section-title" th:text="${sec.props['title'] ?: 'Where you save the most'}">Where you save the most</h2>
+            </div>
+            <div class="product-grid" th:if="${products != null and not #lists.isEmpty(products)}">
+                <th:block th:each="prod : ${products}">
+                    <div th:replace="~{fragments/storefront/product-card :: card(prod=${prod})}"></div>
+                </th:block>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
+

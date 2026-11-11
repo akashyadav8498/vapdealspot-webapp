@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | Vape Deal Spot</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <style>
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 24px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+        }
+        .login-header {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 28px 24px;
+            text-align: center;
+        }
+        .login-header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .login-header p {
+            margin: 8px 0 0;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+        .login-body {
+            padding: 28px 24px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 6px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            box-sizing: border-box;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+        .alert {
+            padding: 12px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .alert-danger {
+            background-color: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        .alert-success {
+            background-color: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: #0f172a;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        .btn-submit:hover {
+            background: #1e293b;
+        }
+        .login-footer {
+            padding: 16px 24px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+            font-size: 12px;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body class="login-wrapper">
+    <div class="login-card">
+        <div class="login-header">
+            <h1>⚡ Vape Deal Spot</h1>
+            <p>Administrative Control Center</p>
+        </div>
+
+        <div class="login-body">
+            <!-- Generic Error Alert (Accessible) -->
+            <div th:if="${param.error}" class="alert alert-danger" role="alert" aria-live="assertive">
+                <span>⚠️</span>
+                <span>Invalid credentials or account inactive.</span>
+            </div>
+
+            <!-- Logout Success Alert -->
+            <div th:if="${param.logout}" class="alert alert-success" role="status">
+                <span>✓</span>
+                <span>You have been signed out successfully.</span>
+            </div>
+
+            <form th:action="@{/admin/login}" method="post">
+                <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <input type="hidden" th:if="${continueUrl != null or param.continue != null}" name="continue" th:value="${continueUrl ?: param.continue}" />
+
+                <div class="form-group">
+                    <label for="email">Admin Email Address</label>
+                    <input type="email"
+                           id="email"
+                           name="email"
+                           class="form-input"
+                           required
+                           autofocus
+                           autocomplete="email"
+                           placeholder="admin@vapedealspot.com" />
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password"
+                           id="password"
+                           name="password"
+                           class="form-input"
+                           required
+                           autocomplete="current-password"
+                           placeholder="••••••••••••" />
+                </div>
+
+                <button type="submit" class="btn-submit">Sign In to Administration</button>
+            </form>
+        </div>
+
+        <div class="login-footer">
+            <span>Vape Deal Spot &bull; Session Authentication &amp; RBAC Control</span>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <section class="reads-section" th:fragment="recentReads(sec)">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-eyebrow" style="color: var(--text-muted);" th:if="${sec.props['eyebrowText']}">
+                    <span aria-hidden="true" th:text="${sec.props['eyebrowIcon'] ?: '📰'}">📰</span>
+                    <span th:text="${sec.props['eyebrowText']}">From the blog</span>
+                </div>
+                <h2 class="section-title" th:text="${sec.props['title'] ?: 'Recent reads'}">Recent reads</h2>
+            </div>
+            <div class="reads-grid" th:if="${sec.props['reads'] != null}">
+                <article th:each="read : ${sec.props['reads']}" class="read-card">
+                    <span class="read-date" th:text="${read['date']}">June 12, 2026</span>
+                    <h3 class="read-title" th:text="${read['title']}">Sub-ohm tanks vs pod systems: Which one saves you more?</h3>
+                    <p class="read-excerpt" th:text="${read['excerpt']}">We ran the math on replacement coils versus pod cartridges over six months of daily vaping.</p>
+                    <a th:href="${read['url'] ?: '/blog'}" class="btn btn-ghost btn-sm" style="margin-top: auto; padding-left: 0; align-self: flex-start; color: var(--brand);">
+                        <span>Read full post</span>
+                        <span aria-hidden="true">&rarr;</span>
+                    </a>
+                </article>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
+

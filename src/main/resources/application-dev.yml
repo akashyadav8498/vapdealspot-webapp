@@ -1,0 +1,39 @@
+# ==============================================================================
+# VAPE DEAL SPOT — DEVELOPMENT ENVIRONMENT (dev)
+# Local development database and diagnostics enabled
+# ==============================================================================
+spring:
+  application:
+    name: vapedealspot-webapp
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:vapedealspot}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  thymeleaf:
+    cache: false
+
+server:
+  port: ${PORT:8080}
+  servlet:
+    session:
+      cookie:
+        secure: false
+        http-only: true
+        same-site: lax
+  error:
+    include-stacktrace: on_param
+    include-message: always
+
+logging:
+  level:
+    root: INFO
+    com.vapedealspot: DEBUG
+    org.hibernate.SQL: DEBUG

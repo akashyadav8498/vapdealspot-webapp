@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="toast">
+        <div th:if="${successMessage != null}" class="admin-toast" style="position: fixed; top: 20px; right: 20px; z-index: 100; background: #dcfce7; color: #15803d; border: 1px solid #86efac; padding: 12px 20px; border-radius: var(--admin-radius); box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-size: 14px; font-weight: 500;">
+            <span th:text="${successMessage}">Success message</span>
+        </div>
+        <div th:if="${errorMessage != null}" class="admin-toast" style="position: fixed; top: 20px; right: 20px; z-index: 100; background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; padding: 12px 20px; border-radius: var(--admin-radius); box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-size: 14px; font-weight: 500;">
+            <span th:text="${errorMessage}">Error message</span>
+        </div>
+    </div>
+</body>
+</html>
